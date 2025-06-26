@@ -3,8 +3,6 @@ package astaro.midmmo.core.expsystem;
 import astaro.midmmo.core.api.exp.ExpAPI;
 import astaro.midmmo.core.data.PlayerData;
 import astaro.midmmo.core.data.PlayerDataCache;
-import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.player.Player;
 
 import java.util.UUID;
 import java.util.logging.Level;
@@ -15,59 +13,62 @@ public class PlayerExp implements ExpAPI {
     private int level;
     private float exp;
     private final UUID uuid;
+    private final String playerName;
 
-    //Устанавливает опыт
-    public PlayerExp(UUID uuid, int level, float exp) {
+    //Install user exp
+    public PlayerExp(UUID uuid, String playerName, int level, float exp) {
         this.uuid = uuid;
+        this.playerName = playerName;
         this.level = level;
         this.exp = exp;
-    }
 
+    }
+    //Method to show current user exp
     @Override
     public float getExperience() {
         return this.exp;
     }
 
-    //Добавляет опыт к уже имеющемуся
+    //Add exp to current
     @Override
     public void addExperience(float amount) {
         this.exp += amount;
         updateExp();
     }
 
+    //Set stable amount of exp
     @Override
     public void setExperience(float exp) {
         this.exp = exp;
     }
-
+    //Return player level
     @Override
     public int getPlayerLevel() {
         return level;
     }
-
+    //Set player level
     @Override
     public void setPlayerLevel(int level) {
         this.level = level;
         updateExp();
     }
-
+    //Check and update user level
     @Override
     public void checkAndUpdateLevel() {
         while (this.exp >= 1f) {
             this.exp -= 1f;
             this.level++;
-            //Добавить что-то на левел-ап
+            //Add smth (for example animation or sound on level up
         }
         updateExp();
     }
-
+    //Calculate player level
     private int calcLvl(float exp){
         return this.level = (int) exp/100;
     }
 
-
+    //Update player cache and data in DB
     private void updateExp() {
-        Player player = Minecraft.getInstance().player;
         PlayerData data = PlayerDataCache.get(this.uuid);
 
         if (data != null) {
@@ -77,7 +78,7 @@ public class PlayerExp implements ExpAPI {
 
             PlayerDataCache.put(this.uuid, data);
 
-            PlayerData.setDataAsync(player.getName().getString(),
+            PlayerData.updateDataAsync(playerName,
                     this.uuid,
                     this.level,
                     this.exp,
@@ -86,7 +87,7 @@ public class PlayerExp implements ExpAPI {
                     Logger.getLogger(PlayerExp.class.getName()).log(Level.INFO, "Данные успешно сохранены!.");
                 } else {
                     Logger.getLogger(PlayerExp.class.getName()).log(Level.WARNING, "Данные пользователя " +
-                            player.getName().getString() + "не были сохранены. Значения опыта: " +
+                            playerName + "не были сохранены. Значения опыта: " +
                             this.exp + " уровень: " + this.level);
                 }
             });

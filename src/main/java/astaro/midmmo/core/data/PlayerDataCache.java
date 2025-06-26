@@ -3,6 +3,7 @@ package astaro.midmmo.core.data;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+//Store userdata in client's cache
 public class PlayerDataCache {
     private static final ConcurrentHashMap<UUID, PlayerData> cache = new ConcurrentHashMap<>();
 

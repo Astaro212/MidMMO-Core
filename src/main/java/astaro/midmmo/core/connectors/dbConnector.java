@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+//Connects to database
 public class dbConnector {
     private static String hostName;
     private static String port;
@@ -17,6 +18,7 @@ public class dbConnector {
     private static String dbType;
     private static String driverClass;
 
+    //Get Data from config
     public void getData() {
         hostName = Config.getHostname();
         port = Config.getPort();
@@ -29,6 +31,7 @@ public class dbConnector {
                 ", username=" + username + ", dbType=" + dbType);
     }
 
+    //Switch driver for connection and execute connection
     public Connection connect() throws SQLException {
         this.getData();
         if (dbType == null) {

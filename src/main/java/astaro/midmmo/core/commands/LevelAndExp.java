@@ -10,12 +10,14 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
-import java.util.function.Supplier;
 
+//Register new command for adding experience
 public class LevelAndExp {
 
+    //register command
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal("addexp")
@@ -32,6 +34,7 @@ public class LevelAndExp {
         );
     }
 
+    //Send command
     private static int setPlayerExp(CommandSourceStack source, String playerName, float exp) {
         var server = source.getServer();
         var player = server.getPlayerList().getPlayerByName(playerName);
@@ -42,22 +45,23 @@ public class LevelAndExp {
 
         UUID uuid = player.getUUID();
 
-        PlayerExp playerExp = getOrCreateData(uuid);
+        PlayerExp playerExp = getOrCreateData(uuid, playerName);
         playerExp.addExperience(exp);
         playerExp.checkAndUpdateLevel();
 
-        source.sendSuccess((Supplier<Component>) Component.literal("Получено " + exp + " опыта."), true);
+        source.sendSuccess(() -> Component.literal("Получено " + exp + " опыта."), true);
         return 1;
 
     }
 
-    private static PlayerExp getOrCreateData(UUID uuid) {
+    //Get data for command
+    private static PlayerExp getOrCreateData(UUID uuid, String playerName) {
 
         PlayerData data = PlayerDataCache.get(uuid);
         if (data != null) {
-            return new PlayerExp(uuid, data.getPlayerLvl(), data.getPlayerExp());
+            return new PlayerExp(uuid, playerName, data.getPlayerLvl(), data.getPlayerExp());
         } else {
-            return new PlayerExp(uuid, 1, 0f);
+            return new PlayerExp(uuid, playerName,1, 0f);
         }
     }
 }

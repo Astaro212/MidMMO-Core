@@ -1,9 +1,7 @@
 package astaro.midmmo.core.data;
 
 import astaro.midmmo.core.connectors.dbConnector;
-import com.mojang.authlib.GameProfile;
 
-import javax.annotation.Nullable;
 import java.sql.*;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -19,22 +17,29 @@ public class PlayerData {
     private float exp;
     private Array playerChar;
 
-    public PlayerData() {}
+    //Empty constructor (mb I'll need him)
+    public PlayerData() {
+    }
 
+    //Main constructor
     public PlayerData(int level, float exp, Array playerChar) {
         this.level = level;
         this.exp = exp;
         this.playerChar = playerChar;
     }
 
+    //Get playerData from database
     public static PlayerData getData(String username, UUID uuid) {
+        //Synchronize for evading user changing packet
         synchronized (lockConn) {
             try (Connection conn = dbc.connect()) {
+                //Using preparedStatement
                 query = "SELECT * FROM stats WHERE name = ? AND user_id = ? ;";
                 PreparedStatement stmt = conn.prepareStatement(query);
                 stmt.setString(1, username);
                 stmt.setString(2, uuid.toString());
                 ResultSet rst = stmt.executeQuery();
+                //Getting data
                 if (rst.next()) {
                     int level = rst.getInt("playerLevel");
                     float exp = rst.getFloat("playerExp");
@@ -48,7 +53,8 @@ public class PlayerData {
         }
     }
 
-    public static boolean setData(String username, UUID uuid, int level, float exp, Array playerChar) {
+    //Updating playerData profile
+    public static boolean updateData(String username, UUID uuid, int level, float exp, Array playerChar) {
         synchronized (lockConn) {
             try (Connection conn = dbc.connect()) {
                 query = "UPDATE stats SET playerLevel = ?, playerExp = ?, playerStats = ? WHERE name = ? AND user_id = ?";
@@ -68,15 +74,44 @@ public class PlayerData {
         }
     }
 
+    //Creating new playerData
+    public static boolean insertData(String username, UUID uuid, int level, float exp, Array playerChar) {
+        synchronized (lockConn) {
+            try (Connection conn = dbc.connect()) {
+                query = "INSERT INTO stats SET playerLevel = ?, playerExp = ?, playerStats = ?, name = ?, user_id = ?";
+                PreparedStatement stmt = conn.prepareStatement(query);
+                stmt.setInt(1, level);
+                stmt.setFloat(2, exp);
+                stmt.setArray(3, playerChar);
+                stmt.setString(4, username);
+                stmt.setString(5, uuid.toString());
+                int result = stmt.executeUpdate();
+                return result != 0;
+            } catch (SQLException e) {
+                Logger.getLogger(PlayerData.class.getName()).log(Level.WARNING, "Failed to set UserData.");
+                return false;
+            }
+
+        }
+    }
+
+    //Needed for asynchronous data getting
     public static CompletableFuture<PlayerData> getDataAsync(String username, UUID uuid) {
         return CompletableFuture.supplyAsync(() -> getData(username, uuid));
     }
 
-    public static CompletableFuture<Boolean> setDataAsync(String username, UUID uuid, int level, float exp, Array playerChar) {
-        return CompletableFuture.supplyAsync(() -> setData(username, uuid, level, exp, playerChar));
+    //Async update
+    public static CompletableFuture<Boolean> updateDataAsync(String username, UUID uuid, int level, float exp, Array playerChar) {
+        return CompletableFuture.supplyAsync(() -> updateData(username, uuid, level, exp, playerChar));
+    }
+
+    //Async inserting
+    public static void insertDataAsync(String username, UUID uuid, int level, float exp, Array playerChar) {
+        CompletableFuture.supplyAsync(() -> insertData(username, uuid, level, exp, playerChar));
     }
 
 
+    //Getters&Setters part
     public void setPlayerLevel(int level) {
         this.level = level;
     }

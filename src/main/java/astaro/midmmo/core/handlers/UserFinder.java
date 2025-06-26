@@ -9,15 +9,16 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+//Find user in site DB
 public class UserFinder {
 
     private static final Object lockConn = new Object();
     private static final dbConnector dbc = new dbConnector();
 
     /**
-     * Находит пользователя по имени и возвращает его GameProfile.
-     * @param username Имя пользователя.
-     * @return GameProfile или null, если пользователь не найден.
+     * Return username if he exists.
+     * @param username
+     * @return GameProfile or null.
      */
     @Nullable
     public static GameProfile findUser(String username) {

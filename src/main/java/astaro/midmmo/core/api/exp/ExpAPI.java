@@ -1,5 +1,6 @@
 package astaro.midmmo.core.api.exp;
 
+//Exp interface for future dependencies
 public interface ExpAPI {
 
     float getExperience();

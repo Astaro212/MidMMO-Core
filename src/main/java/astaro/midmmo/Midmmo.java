@@ -1,8 +1,12 @@
 package astaro.midmmo;
 
+import astaro.midmmo.core.commands.LevelAndExp;
+import astaro.midmmo.core.commands.RegisterCommands;
+import astaro.midmmo.core.data.CreateTable;
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.food.FoodProperties;
@@ -11,7 +15,6 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.api.distmarker.Dist;
@@ -62,8 +65,9 @@ public class Midmmo {
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public Midmmo(IEventBus modEventBus, ModContainer modContainer) {
-        // Register the commonSetup method for modloading
+        // Register the commonSetup method for mod loading
         modEventBus.addListener(this::commonSetup);
+        NeoForge.EVENT_BUS.register(RegisterCommands.class);
 
         // Register the Deferred Register to the mod event bus so blocks get registered
         BLOCKS.register(modEventBus);
@@ -81,18 +85,13 @@ public class Midmmo {
         modEventBus.addListener(this::addCreative);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        modContainer.registerConfig(ModConfig.Type.SERVER, Config.SPEC);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         // Some common setup code
-        LOGGER.info("HELLO FROM COMMON SETUP");
+        LOGGER.info("MidMMO-Core is starting!");
 
-        if (Config.logDirtBlock) LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
-
-        LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
-
-        Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
     }
 
     // Add the example block item to the building blocks tab
@@ -104,7 +103,16 @@ public class Midmmo {
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
-        LOGGER.info("HELLO from server starting");
+        LOGGER.info("Starting MidMMO-Core");
+        if (CreateTable.createTable()) {
+            LOGGER.info("Creating database table!");
+        } else {
+            LOGGER.info("Database already exists. All is OK. Starting logic.");
+        }
+    }
+
+    public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher){
+        LevelAndExp.register(dispatcher);
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
@@ -113,7 +121,7 @@ public class Midmmo {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             // Some client setup code
-            LOGGER.info("HELLO FROM CLIENT SETUP");
+            LOGGER.info("Hello From User Setup");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         }
     }

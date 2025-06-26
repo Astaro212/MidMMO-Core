@@ -1,4 +1,4 @@
-package astaro.midmmo.core.database;
+package astaro.midmmo.core.data;
 
 import astaro.midmmo.core.connectors.dbConnector;
 
@@ -14,6 +14,7 @@ public class CreateTable {
     private static final Object lockConn = new Object();
     private static dbConnector dbc = new dbConnector();
 
+    //Create table in DB for playerProfiles
     public static boolean createTable() {
         try (Connection conn = dbc.connect(); Statement stmt = conn.createStatement()) {
             query = """

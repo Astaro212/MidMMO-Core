@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+//Mobtype enum with experience values
 public enum MobType {
 
     ZOMBIE(2.0F),
