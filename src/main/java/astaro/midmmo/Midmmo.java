@@ -1,10 +1,15 @@
 package astaro.midmmo;
 
+import astaro.midmmo.core.GUI.classSelection.ClassSelectionScreen;
+import astaro.midmmo.core.GUI.classSelection.RaceSelectionMenu;
 import astaro.midmmo.core.commands.LevelAndExp;
 import astaro.midmmo.core.commands.RegisterCommands;
 import astaro.midmmo.core.data.CreateTable;
+import astaro.midmmo.core.networking.ClientPacketHandler;
+import astaro.midmmo.core.registries.MenuRegistry;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.logging.LogUtils;
+import io.netty.channel.pool.SimpleChannelPool;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.registries.Registries;
@@ -26,9 +31,11 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -62,6 +69,7 @@ public class Midmmo {
         output.accept(EXAMPLE_ITEM.get()); // Add the example item to the tab. For your own tabs, this method is preferred over the event
     }).build());
 
+
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public Midmmo(IEventBus modEventBus, ModContainer modContainer) {
@@ -73,6 +81,7 @@ public class Midmmo {
         BLOCKS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so items get registered
         ITEMS.register(modEventBus);
+        MenuRegistry.register(modEventBus);
         // Register the Deferred Register to the mod event bus so tabs get registered
         CREATIVE_MODE_TABS.register(modEventBus);
 
@@ -80,6 +89,7 @@ public class Midmmo {
         // Note that this is necessary if and only if we want *this* class (Midmmo) to respond directly to events.
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
+
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
@@ -123,6 +133,12 @@ public class Midmmo {
             // Some client setup code
             LOGGER.info("Hello From User Setup");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        }
+
+        @SubscribeEvent
+        public static void registerScreens(RegisterMenuScreensEvent event){
+            event.register(RaceSelectionMenu.get(), ClassSelectionScreen::new);
+
         }
     }
 }

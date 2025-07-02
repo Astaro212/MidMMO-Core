@@ -1,0 +1,7 @@
+{
+  "message_id": "midmmo.physical_damage",
+  "scaling":  "never",
+  "exhausting": 0.1,
+  "effects": "hurt",
+  "death_message_type": "default"
+}

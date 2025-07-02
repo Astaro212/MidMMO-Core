@@ -1,11 +1,11 @@
 package astaro.midmmo.core.expsystem;
 
+
 import astaro.midmmo.core.data.PlayerData;
 import astaro.midmmo.core.data.PlayerDataCache;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -21,7 +21,7 @@ public class ExpListeners {
     //Mob kill
     @SubscribeEvent
     public static void onMobKill(LivingDeathEvent event) {
-        if (event.getSource().getEntity() instanceof Player player) {
+        if (event.getSource().getEntity() instanceof ServerPlayer player) {
             UUID uuid = player.getUUID();
             String playerName = player.getName().getString();
 
@@ -33,8 +33,7 @@ public class ExpListeners {
                 PlayerExp playerExp = getOrCreateData(uuid, playerName);
                 playerExp.addExperience(expGained);
                 playerExp.checkAndUpdateLevel();
-                Minecraft.getInstance().gui.getChat().addMessage(
-                        Component.literal("Вы получили " + expGained +
+                player.sendSystemMessage(Component.literal("Вы получили " + expGained +
                                 " опыта за убийство " + entity.getDisplayName().getString()));
 
             }
@@ -51,5 +50,6 @@ public class ExpListeners {
             return new PlayerExp(uuid, playerName, 1, 0f);
         }
     }
+
 }
 

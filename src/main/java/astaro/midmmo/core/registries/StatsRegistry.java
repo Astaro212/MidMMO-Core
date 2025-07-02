@@ -1,4 +1,4 @@
-package astaro.midmmo.core.stats;
+package astaro.midmmo.core.registries;
 
 import astaro.midmmo.core.attributes.BasicAttribute;
 import astaro.midmmo.core.attributes.DamageAttribute;
@@ -28,6 +28,7 @@ public class StatsRegistry {
     public static final DeferredHolder<Attribute, Attribute> WISDOM = newBasicAttribute("wisdom");
     public static final DeferredHolder<Attribute, Attribute> SPIRIT = newBasicAttribute("spirit");
 
+    public static final DeferredHolder<Attribute, Attribute> PHYSICAL_DAMAGE = newDamageAttribute("physical_damage");
     public static final DeferredHolder<Attribute, Attribute> MAGIC_DAMAGE = newDamageAttribute("magic_damage");
 
     public static final DeferredHolder<Attribute, Attribute> FIRE_DAMAGE = newDamageAttribute("fire_damage");

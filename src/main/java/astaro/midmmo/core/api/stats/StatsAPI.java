@@ -1,6 +1,6 @@
 package astaro.midmmo.core.api.stats;
 
-import astaro.midmmo.core.stats.StatsRegistry;
+import astaro.midmmo.core.registries.StatsRegistry;
 
 public interface StatsAPI {
 

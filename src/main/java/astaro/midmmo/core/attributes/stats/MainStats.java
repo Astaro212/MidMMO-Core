@@ -1,14 +1,6 @@
-package astaro.midmmo.core.stats;
+package astaro.midmmo.core.attributes.stats;
 
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.item.enchantment.ConditionalEffect;
-import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
-import net.minecraft.world.item.enchantment.LevelBasedValue;
-import net.minecraft.world.item.enchantment.effects.AddValue;
-
-import java.util.List;
-import java.util.Optional;
+import astaro.midmmo.core.registries.StatsRegistry;
 
 //Main stats handler
 public class MainStats {
@@ -21,9 +13,11 @@ public class MainStats {
     int spi;
     int luck;
 
+
     public int Strength() {
         this.str = StatsRegistry.STRENGTH.get().getDefaultValue();
         str = str + 3F;
+        double dmg = str*1.2;
         return 0;
     }
 

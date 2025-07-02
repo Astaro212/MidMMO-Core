@@ -3,12 +3,12 @@ package astaro.midmmo.core.handlers;
 import astaro.midmmo.core.data.PlayerData;
 import astaro.midmmo.core.data.PlayerDataCache;
 import astaro.midmmo.core.expsystem.PlayerExp;
-import com.mojang.brigadier.Message;
+import astaro.midmmo.core.networking.ClientPacketHandler;
+import astaro.midmmo.core.networking.PacketSender;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.OutgoingChatMessage;
-import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.server.level.ServerPlayer;
-import org.apache.logging.log4j.core.jmx.Server;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -35,9 +35,7 @@ public class LoginHandler {
                     applyPlayerData(player, playerData);
                 } else {
                     //else create new player profile with stats and level
-                    PlayerData newPlayer = new PlayerData(1, 0f, null);
-                    PlayerData.insertDataAsync(player.getName().getString(), uuid, newPlayer.getPlayerLvl(), newPlayer.getPlayerExp(), newPlayer.getPlayerChar());
-                    serverPlayer.sendSystemMessage(Component.literal("&eПрофиль нового игрока успешно создан!"));
+                    PacketDistributor.sendToPlayer(serverPlayer, new PacketSender(serverPlayer.containerMenu.containerId));
                 }
             });
         } else {
@@ -59,8 +57,10 @@ public class LoginHandler {
     public static void onPlayerExit(@NotNull ServerPlayer player) {
         if (player instanceof ServerPlayer serverPlayer) {
             PlayerData cachedData = PlayerDataCache.get(serverPlayer.getUUID());
-            PlayerData.updateDataAsync(serverPlayer.getName().getString(), serverPlayer.getUUID(),
-                    cachedData.getPlayerLvl(), cachedData.getPlayerExp(), cachedData.getPlayerChar());
+            if (cachedData != null) {
+                PlayerData.updateDataAsync(serverPlayer.getName().getString(), serverPlayer.getUUID(),
+                        cachedData.getPlayerLvl(), cachedData.getPlayerExp(), cachedData.getPlayerChar());
+            }
         }
     }
 

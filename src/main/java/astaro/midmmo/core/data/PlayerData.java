@@ -16,6 +16,8 @@ public class PlayerData {
     private int level;
     private float exp;
     private Array playerChar;
+    private String playerClass;
+    private String playerRace;
 
     //Empty constructor (mb I'll need him)
     public PlayerData() {
@@ -75,16 +77,18 @@ public class PlayerData {
     }
 
     //Creating new playerData
-    public static boolean insertData(String username, UUID uuid, int level, float exp, Array playerChar) {
+    public static boolean insertData(String username, UUID uuid, int level, float exp, Array playerChar, String playerRace, String playerClass) {
         synchronized (lockConn) {
             try (Connection conn = dbc.connect()) {
-                query = "INSERT INTO stats SET playerLevel = ?, playerExp = ?, playerStats = ?, name = ?, user_id = ?";
+                query = "INSERT INTO stats(user_id, name, playerRace, playerClass,playerExp, playerLevel, playerStats) VALUES(?,?,?,?,?,?,?)";
                 PreparedStatement stmt = conn.prepareStatement(query);
-                stmt.setInt(1, level);
-                stmt.setFloat(2, exp);
-                stmt.setArray(3, playerChar);
-                stmt.setString(4, username);
-                stmt.setString(5, uuid.toString());
+                stmt.setString(1, uuid.toString());
+                stmt.setString(2, username);
+                stmt.setString(3, playerRace);
+                stmt.setString(4, playerClass);
+                stmt.setFloat(5, exp);
+                stmt.setInt(6, level);
+                stmt.setArray(7, playerChar);
                 int result = stmt.executeUpdate();
                 return result != 0;
             } catch (SQLException e) {
@@ -106,8 +110,8 @@ public class PlayerData {
     }
 
     //Async inserting
-    public static void insertDataAsync(String username, UUID uuid, int level, float exp, Array playerChar) {
-        CompletableFuture.supplyAsync(() -> insertData(username, uuid, level, exp, playerChar));
+    public static void insertDataAsync(String username, UUID uuid, int level, float exp, Array playerChar, String playerRace, String playerClass) {
+        CompletableFuture.supplyAsync(() -> insertData(username, uuid, level, exp, playerChar, playerRace, playerClass));
     }
 
 
@@ -136,4 +140,20 @@ public class PlayerData {
         return playerChar;
     }
 
+
+    public void setPlayerClass(String pClass) {
+        this.playerClass = pClass;
+    }
+
+    public void setPlayerRace(String pRace) {
+        this.playerRace = pRace;
+    }
+
+    public String getPlayerRace() {
+        return playerRace;
+    }
+
+    public String getPlayerClass() {
+        return playerClass;
+    }
 }

@@ -55,8 +55,8 @@ public class PlayerExp implements ExpAPI {
     //Check and update user level
     @Override
     public void checkAndUpdateLevel() {
-        while (this.exp >= 1f) {
-            this.exp -= 1f;
+        while (this.exp >= 1000f) {
+            this.exp -= 1000f;
             this.level++;
             //Add smth (for example animation or sound on level up
         }
