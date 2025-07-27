@@ -1,15 +1,11 @@
 package astaro.midmmo;
 
-import astaro.midmmo.core.GUI.classSelection.ClassSelectionScreen;
-import astaro.midmmo.core.GUI.classSelection.RaceSelectionMenu;
 import astaro.midmmo.core.commands.LevelAndExp;
 import astaro.midmmo.core.commands.RegisterCommands;
 import astaro.midmmo.core.data.CreateTable;
-import astaro.midmmo.core.networking.ClientPacketHandler;
 import astaro.midmmo.core.registries.MenuRegistry;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.logging.LogUtils;
-import io.netty.channel.pool.SimpleChannelPool;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.registries.Registries;
@@ -31,11 +27,9 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -135,10 +129,12 @@ public class Midmmo {
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         }
 
-        @SubscribeEvent
-        public static void registerScreens(RegisterMenuScreensEvent event){
-            event.register(RaceSelectionMenu.get(), ClassSelectionScreen::new);
-
-        }
+        /*@SubscribeEvent
+        public static void onRenderHUD(RenderGuiEvent.Pre event){
+            if(Minecraft.getInstance().options.hideGui) return;
+            if(event.getGuiGraphics() instanceof GuiGraphics) {
+                event.setCanceled(true);
+            }
+        }*/
     }
 }

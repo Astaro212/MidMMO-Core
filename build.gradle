@@ -92,14 +92,25 @@ neoForge {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 configurations {
-            shade
-            implementation.extendsFrom(shade)
+    shade
+    implementation.extendsFrom(shade)
+
+    configureEach {
+        exclude group: 'com.google.errorprone', module: 'error_prone_annotations'
+        resolutionStrategy {
+            force 'org.slf4j:slf4j-api:2.0.9'
+            force 'com.google.errorprone:error_prone_annotations:2.23.0'
         }
+    }
+}
 
 dependencies {
     shade 'org.mariadb.jdbc:mariadb-java-client:3.5.3'
     shade 'com.mysql:mysql-connector-j:9.2.0'
-    shade 'com.google.protobuf:protobuf-java:4.29.0'
+    shade 'com.zaxxer:HikariCP:6.3.0'
+    shade 'com.github.ben-manes.caffeine:caffeine:3.2.2'
+    compileOnly 'com.google.errorprone:error_prone_annotations:2.23.0'
+    compileOnly 'org.slf4j:slf4j-api:2.0.9'
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
@@ -142,7 +153,9 @@ publishing {
     }
 }
 
-shadowJar{
+shadowJar {
+    exclude 'org/slf4j/**'
+    exclude 'META-INF/services/org.slf4j.*'
     archiveClassifier.set('')
     configurations = [project.configurations.shade]
 }
@@ -154,4 +167,11 @@ idea {
         downloadSources = true
         downloadJavadoc = true
     }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += [
+            '--add-exports',
+            'org.slf4j/org.slf4j.spi=neoforge'
+    ]
 }

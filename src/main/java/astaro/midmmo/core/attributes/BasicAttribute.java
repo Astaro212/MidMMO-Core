@@ -8,7 +8,7 @@ import net.minecraft.world.entity.ai.attributes.RangedAttribute;
  * @param min value
  * @param max value
  */
-public class BasicAttribute extends RangedAttribute implements IStats {
+public class BasicAttribute extends RangedAttribute {
     public BasicAttribute(String s, double v, double v1, double v2) {
         super(s, v, v1,v2);
         if(v1 < v2){

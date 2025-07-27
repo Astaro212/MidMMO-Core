@@ -1,11 +1,21 @@
 package astaro.midmmo.core.api.stats;
 
-import astaro.midmmo.core.registries.StatsRegistry;
+
+import java.util.Map;
 
 public interface StatsAPI {
 
-    public void getStats();
-    public void addStat(StatsRegistry registry);
-    public void removeStat(StatsRegistry registry);
+    Map<String, Double> getStats();
 
+    // Получить конкретный стат
+    Double getStat(String stat);
+
+    // Изменить конкретный стат
+    void setStat(String stat, double value);
+
+    // Добавить к стату значение
+    void addStat(String stat, double value);
+
+    //Убрать значение от стата (например спал эффект баффа)
+    void removeStat(String stat, double value);
 }

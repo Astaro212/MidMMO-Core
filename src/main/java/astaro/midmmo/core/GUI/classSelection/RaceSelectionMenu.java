@@ -1,5 +1,6 @@
 package astaro.midmmo.core.GUI.classSelection;
 
+import astaro.midmmo.core.data.PlayerData;
 import astaro.midmmo.core.registries.MenuRegistry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -7,9 +8,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 
-public class RaceSelectionMenu extends AbstractContainerMenu{
+public class RaceSelectionMenu extends AbstractContainerMenu {
+
+
 
     private static final MenuType<RaceSelectionMenu> MENU_TYPE = MenuRegistry.RACE_MENU.get();
     private String selectedRace;
@@ -20,11 +24,10 @@ public class RaceSelectionMenu extends AbstractContainerMenu{
     }
 
     public RaceSelectionMenu(int i, Inventory inventory, RegistryFriendlyByteBuf registryFriendlyByteBuf) {
-       this(i, inventory);
+        this(i, inventory);
 
-       RegistryFriendlyByteBuf wrapped = registryFriendlyByteBuf;
-       this.selectedRace = wrapped.readUtf(255);
-       this.selectedClass = wrapped.readUtf(255);
+        this.selectedRace = registryFriendlyByteBuf.readUtf(255);
+        this.selectedClass = registryFriendlyByteBuf.readUtf(255);
     }
 
     public static MenuType<RaceSelectionMenu> get() {
@@ -32,20 +35,23 @@ public class RaceSelectionMenu extends AbstractContainerMenu{
     }
 
     @Override
-    public ItemStack quickMoveStack(Player player, int i) {
+    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int i) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NotNull Player player) {
         return false;
     }
 
-    public void encode(RegistryFriendlyByteBuf buf){
+    public void encode(RegistryFriendlyByteBuf buf) {
         buf.writeUtf(selectedRace, 255);
         buf.writeUtf(selectedClass, 255);
     }
 
-    public String getRace() { return selectedRace; }
-    public String getClassName() { return selectedClass; }
+    public void setParams() {
+        PlayerData playerData = new PlayerData();
+        playerData.setPlayerRace(selectedRace);
+        playerData.setPlayerClass(selectedClass);
+    }
 }

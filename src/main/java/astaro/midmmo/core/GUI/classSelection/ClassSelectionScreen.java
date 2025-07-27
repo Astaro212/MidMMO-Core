@@ -1,116 +1,228 @@
 package astaro.midmmo.core.GUI.classSelection;
 
 import astaro.midmmo.Midmmo;
+import astaro.midmmo.core.networking.RaceMenuPacket;
+import astaro.midmmo.core.player.classes.ClassInfo;
+import astaro.midmmo.core.player.classes.ClassManager;
+import astaro.midmmo.core.player.races.RaceInfo;
+import astaro.midmmo.core.player.races.RaceManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Inventory;
+import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
 
-public class ClassSelectionScreen extends AbstractContainerScreen<RaceSelectionMenu> {
+public class ClassSelectionScreen extends Screen  /*extends AbstractContainerScreen<RaceSelectionMenu>*/ {
 
-    private final Button raceButton;
-    private final Button classButton;
+    private static final float LEFT_PANEL_POS_X = 0.20F;
+    private static final float RIGHT_PANEL_POS_X = 0.70F;
+    private static final float PANELS_Y = 0.20F;
+    private static final int BUTTON_WIDTH = 80;
+    private static final int BUTTON_HEIGHT = 15;
+    private static final int SKIN_SIZE = 100;
+    private static final float SKIN_POS_X = 0.40F;
+    private static final float SKIN_POS_Y = 0.2F;
+
+
+    private enum SelectionState {
+        RACE_SELECTION,
+        CLASS_SELECTION
+    }
+
+    private boolean showMessage = false;
+    private SelectionState cState = SelectionState.RACE_SELECTION;
+
     private String race;
     private String className;
 
-    private boolean showRacePanel = true;
+    private MultiLineTextWidget textWidget;
+    private List<AbstractWidget> rightWidgets = new ArrayList<>();
+    private PlayerSkinWidget widget;
+
+
+    int clientWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
+    int clientHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
 
     private static final ResourceLocation CLASS_BACKGROUND = ResourceLocation.fromNamespaceAndPath(Midmmo.MODID,
-            "textures/gui/container/stats_container.png");
+            "textures/gui/container/menu.png");
 
-    public ClassSelectionScreen(RaceSelectionMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title);
-
-        this.imageWidth = 200;
-        this.imageHeight = 150;
-        this.titleLabelX = 10;
-        this.inventoryLabelX = 10;
-
-        raceButton = Button.builder(Component.literal("Select race"), btn -> {
-            btn.setMessage(Component.literal("Race picked;"));
-            this.onRaceSelected();
-        }).build();
-        classButton = Button.builder(Component.literal("Select class"), btn -> {
-            btn.setMessage(Component.literal("Class Selected!"));
-            this.play();
-        }).build();
-
+    public ClassSelectionScreen(Component title) {
+        super(title);
     }
 
-    private void onRaceSelected() {
-        // Hide race panel
-        showRacePanel = false;
+    private void CreateLeftSelector() {
+        int xOffset = (int) (clientWidth * LEFT_PANEL_POS_X);
+        int yOffset = (int) (clientHeight * PANELS_Y);
+        int gap = 5;
+
+        addRenderableWidget(new Button.Builder(Component.literal("Select race"), btn -> {
+            showSelectionPanel(SelectionState.RACE_SELECTION);
+        }).bounds(xOffset, yOffset, BUTTON_WIDTH, BUTTON_HEIGHT).build());
+
+
+        yOffset += BUTTON_HEIGHT + gap;
+
+        addRenderableWidget(new Button.Builder(Component.literal("Select class"), btn -> {
+            showSelectionPanel(SelectionState.CLASS_SELECTION);
+        }).bounds(xOffset, yOffset, BUTTON_WIDTH, BUTTON_HEIGHT).build());
+
+        yOffset += BUTTON_HEIGHT + gap;
+
+        addRenderableWidget(new Button.Builder(Component.literal("Create character"), btn -> {
+            onClose();
+        }).bounds(xOffset, yOffset, BUTTON_WIDTH, BUTTON_HEIGHT).build());
     }
 
-    private void play() {
-        this.onClose();
-    }
+    private void showSelectionPanel(SelectionState state) {
+        rightWidgets.forEach(this::removeWidget);
+        rightWidgets.clear();
 
-    @Override
-    protected void init() {
-        super.init();
-        // Install buttons
-        addRenderableWidget(raceButton);
-        addRenderableWidget(classButton);
-    }
+        cState = state;
 
-    @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBg(guiGraphics, partialTick, mouseX, mouseY);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        if (showRacePanel) {
-            guiGraphics.drawString(this.font, "Pick race", this.leftPos + 10, this.topPos + 10, 0xFFFFFF);
-            // Add race elements
-            Button orcButton = Button.builder(Component.literal("Orc"), btn -> {
-                this.race = "Orc";
-                btn.setMessage(Component.literal("Race picked;"));
-            }).build();
-            raceButton.render(guiGraphics, mouseX, mouseY, partialTick);
+        int xOffset = (int) (clientWidth * RIGHT_PANEL_POS_X);
+        int yOffset = (int) (clientHeight * PANELS_Y);
+        int gap = 5;
+
+        if (textWidget == null) {
+            textWidget = new MultiLineTextWidget(
+                    xOffset - 100,
+                    (int) (yOffset * 0.2),
+                    Component.empty(),
+                    font
+            ).setMaxWidth(150);
+        }
+
+        addRenderableWidget(textWidget);
+        rightWidgets.add(textWidget);
+
+        if (cState == SelectionState.RACE_SELECTION) {
+            showRaceSelection(xOffset, yOffset, gap);
         } else {
-            guiGraphics.drawString(this.font, "Pick class", this.leftPos + 10, this.topPos + 10, 0xFFFFFF);
-            Button warBtn = Button.builder(Component.literal("Warrior"), btn -> {
-                this.className = "Warrior";
-                btn.setMessage(Component.literal("Class Selected!"));
-            }).build();
-            classButton.render(guiGraphics, mouseX, mouseY, partialTick);
+            showClassSelection(xOffset, yOffset, gap);
+        }
+    }
+
+
+    private void showRaceSelection(int xOffset, int yOffset, int gap) {;
+        for (RaceInfo race : RaceManager.RACE_MAP.values()) {
+
+            Button raceBtn = new Button.Builder(Component.literal(race.raceName), btn1 -> {
+                this.race = race.raceName;
+                updateSkin(race);
+                textWidget.setMessage(Component.literal(race.raceDescription));
+
+            }).bounds(xOffset, yOffset, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+
+
+            addRenderableWidget(raceBtn);
+            rightWidgets.add(raceBtn);
+            yOffset += BUTTON_HEIGHT + gap;
+        }
+    }
+
+    private void showClassSelection(int xOffset, int yOffset, int gap) {
+        for (ClassInfo classInfo : ClassManager.CLASS_INFO.values()) {
+            Button classBtn = new Button.Builder(Component.literal(classInfo.className),
+                    btn1 -> {
+                        this.className = classInfo.className;
+                        textWidget.setMessage(Component.literal(classInfo.classDescriprtion));
+                    }).bounds(xOffset, yOffset, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+            addRenderableWidget(classBtn);
+            rightWidgets.add(classBtn);
+            yOffset += BUTTON_HEIGHT + gap;
         }
 
     }
 
-    @Override
-    protected void renderBg(GuiGraphics guiGraphics, float v, int i, int i1) {
-        guiGraphics.blit(RenderType::guiTextured,
-                CLASS_BACKGROUND,
-                this.leftPos, this.topPos,
-                0, 0,
-                this.imageWidth, this.imageHeight,
-                256, 256);
+    private void updateSkin(RaceInfo race) {
+
+        int xOffset = (int) (clientWidth * SKIN_POS_X);
+        int yOffset = (int) (clientHeight * SKIN_POS_Y);
+
+        removeWidget(widget);
+        rightWidgets.remove(widget);
+
+        PlayerSkin newSkin = new PlayerSkin(
+                race.skinLocation,
+                race.skinLocation.toString(),
+                null, null, PlayerSkin.Model.SLIM, true
+        );
+
+
+        widget = new PlayerSkinWidget(
+                xOffset,
+                yOffset,
+                EntityModelSet.vanilla(),
+                () -> newSkin
+        );
+        widget.setSize(SKIN_SIZE, SKIN_SIZE);
+        widget.setPosition(xOffset,yOffset);
+
+        addRenderableWidget(widget);
+        rightWidgets.add(widget);
     }
 
+
+    protected void init() {
+        super.init();
+        CreateLeftSelector();
+        showSelectionPanel(SelectionState.RACE_SELECTION);
+    }
+
+
     @Override
-    protected void containerTick() {
-        super.containerTick();
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        int clientWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
+        int clientHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
+
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+        RenderSystem.setShaderTexture(0, CLASS_BACKGROUND);
+        guiGraphics.blit(RenderType.GUI_TEXTURED, CLASS_BACKGROUND,
+                0, 0,
+                0, 0,
+                clientWidth, clientHeight,
+                clientWidth, clientHeight);
+
+        String title = cState == SelectionState.RACE_SELECTION ? "Select race" : "Select class";
+        guiGraphics.drawString(font, title, (int) (clientWidth * 0.20), (int) (clientHeight * 0.05), 0xFFFFFF);
+
+
+        if (showMessage) {
+            guiGraphics.drawString(this.font, "U must pick ur race and class.", (int) (clientWidth * 0.20), (int) (clientWidth * 0.75), 0xFFFFFF);
+        }
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
     @Override
     public void onClose() {
-        // Stop any handlers here
-
-        // Call last in case it interferes with the override
-        super.onClose();
+        // Stop any handlers or check smth here
+        if (race != null && className != null) {
+            PacketDistributor.sendToServer(new RaceMenuPacket(0, race, className));
+            this.minecraft.player.displayClientMessage(Component.literal(
+                    "You have picked race: " + race + " and class: " + className
+            ), false);
+            super.onClose();
+        } else {
+            showMessage = true;
+        }
     }
 
     @Override
     public void removed() {
         // Reset initial states here
-
         // Call last in case it interferes with the override
-        super.removed()
-        ;
+        super.removed();
     }
 
 }

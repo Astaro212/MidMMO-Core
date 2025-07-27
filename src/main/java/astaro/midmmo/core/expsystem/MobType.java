@@ -1,5 +1,7 @@
 package astaro.midmmo.core.expsystem;
 
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -7,32 +9,61 @@ import java.util.HashMap;
 import java.util.Map;
 
 //Mobtype enum with experience values
+//Updated mobtype with modifiers and mob cats
 public enum MobType {
 
-    ZOMBIE(2.0F),
-    SKELETON(1.5F),
-    CREEPER(0.5F);
+    COMMON("common",1.0F),
+    ELITE("elite",1.5F),
+    LEGENDARY("legendary",2.0F),
+    MINIBOSS("miniboss",4.0F),
+    BOSS("boss",8.0F),
+    WORLDBOSS("worldboss",15.0F);
 
-    private static final Map<String, MobType> ENTITY_NAME = new HashMap<>();
+    //For mob types and categories
+    private static final Map<EntityType<?>, MobType> ENTITY_NAME = new HashMap<>();
+    private static final Map<String, MobType> CATEGORIES = new HashMap<>();
 
     static {
-        ENTITY_NAME.put("minecraft:zombie", ZOMBIE);
-        ENTITY_NAME.put("minecraft:skeleton", SKELETON);
-        ENTITY_NAME.put("minecraft:creeper", CREEPER);
+        registerMob(EntityType.ZOMBIE, COMMON, 5.0F);
+        registerMob(EntityType.SKELETON, ELITE, 7.0F);
+        registerMob(EntityType.CREEPER, MINIBOSS, 8.0F);
+
+        CATEGORIES.put("common", COMMON);
+        CATEGORIES.put("elite", ELITE);
+        CATEGORIES.put("legendary", LEGENDARY);
+        CATEGORIES.put("miniboss", MINIBOSS);
+        CATEGORIES.put("boss", BOSS);
+        CATEGORIES.put("worldboss", WORLDBOSS);
     }
 
-    private final float exp;
+    public static void registerMob(EntityType<?> type, MobType mobType, float exp){
+        ENTITY_NAME.put(type, mobType.withCustomExp(exp));
+    }
 
-    MobType(float exp) {
-        this.exp = exp;
+    private final String category;
+    private final float baseExp;
+    private float customExp = -1;
+
+    MobType(String category, float exp) {
+        this.category = category;
+        this.baseExp = exp;
+    }
+
+    public MobType withCustomExp(float exp) {
+        this.customExp = exp;
+        return this;
     }
 
     public float getExp() {
-        return exp;
+        return customExp >= 0 ? customExp : baseExp;
     }
 
+    //Checks and gets
     public static MobType fromEntity(@NotNull LivingEntity entity) {
-        String name = entity.getType().getCategory().getName();
-        return ENTITY_NAME.get(name);
+        MobType type = ENTITY_NAME.get(entity.getType());
+        if (type != null) return type;
+
+        return CATEGORIES.get(entity.getType().getCategory().getName());
     }
+
 }

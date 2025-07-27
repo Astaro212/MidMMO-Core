@@ -2,7 +2,7 @@ package astaro.midmmo.core.attributes;
 
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 
-public class DamageAttribute extends RangedAttribute implements IStats {
+public class DamageAttribute extends RangedAttribute {
     /*
      * @param name
      * @param base value

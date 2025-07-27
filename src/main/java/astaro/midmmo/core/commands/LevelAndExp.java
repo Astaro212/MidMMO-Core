@@ -2,7 +2,7 @@ package astaro.midmmo.core.commands;
 
 
 import astaro.midmmo.core.data.PlayerData;
-import astaro.midmmo.core.data.PlayerDataCache;
+import astaro.midmmo.core.data.cache.PlayerDataCache;
 import astaro.midmmo.core.expsystem.PlayerExp;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
@@ -10,7 +10,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 

@@ -1,8 +1,8 @@
 package astaro.midmmo.core.attributes;
 
-import net.neoforged.neoforge.common.PercentageAttribute;
+import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 
-public class ResistAttribute extends PercentageAttribute implements IStats {
+public class ResistAttribute extends RangedAttribute {
     /*
      *@param name
      *@param defaultValue

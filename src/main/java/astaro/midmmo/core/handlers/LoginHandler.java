@@ -1,13 +1,13 @@
 package astaro.midmmo.core.handlers;
 
+import astaro.midmmo.core.attributes.stats.PlayerStatsManager;
 import astaro.midmmo.core.data.PlayerData;
-import astaro.midmmo.core.data.PlayerDataCache;
+import astaro.midmmo.core.data.cache.PlayerDataCache;
 import astaro.midmmo.core.expsystem.PlayerExp;
-import astaro.midmmo.core.networking.ClientPacketHandler;
-import astaro.midmmo.core.networking.PacketSender;
-import net.minecraft.client.Minecraft;
+import astaro.midmmo.core.networking.RaceMenuPacket;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public class LoginHandler {
 
-    private static PlayerData cachedData;
+    protected static PlayerData cachedData;
 
     //Checks if player exists in site database
     public static void onPlayerLogin(@NotNull ServerPlayer player) {
@@ -35,7 +35,8 @@ public class LoginHandler {
                     applyPlayerData(player, playerData);
                 } else {
                     //else create new player profile with stats and level
-                    PacketDistributor.sendToPlayer(serverPlayer, new PacketSender(serverPlayer.containerMenu.containerId));
+                    serverPlayer.setGameMode(GameType.SPECTATOR);
+                    PacketDistributor.sendToPlayer(serverPlayer, new RaceMenuPacket(serverPlayer.containerMenu.containerId,"", ""));
                 }
             });
         } else {
@@ -50,6 +51,14 @@ public class LoginHandler {
     private static void applyPlayerData(ServerPlayer player, @NotNull PlayerData data) {
         PlayerExp playerExp = new PlayerExp(player.getUUID(), player.getName().
                 getString(), data.getPlayerLvl(), data.getPlayerExp());
+        PlayerStatsManager manager = new PlayerStatsManager();
+        manager.setPlayerLevel(playerExp.getPlayerLevel());
+
+        cachedData.setPlayerRace(data.getPlayerRace());
+        cachedData.setPlayerClass(data.getPlayerClass());
+        cachedData.setPlayerLevel(playerExp.getPlayerLevel());
+        cachedData.setPlayerExp(playerExp.getExperience());
+        cachedData.setPlayerChar(data.getPlayerChar());
 
     }
 

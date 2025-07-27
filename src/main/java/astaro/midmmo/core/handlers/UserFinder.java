@@ -1,6 +1,6 @@
 package astaro.midmmo.core.handlers;
 
-import astaro.midmmo.core.connectors.dbConnector;
+import astaro.midmmo.core.data.connectors.dbConnector;
 import com.mojang.authlib.GameProfile;
 import org.jetbrains.annotations.Nullable;
 

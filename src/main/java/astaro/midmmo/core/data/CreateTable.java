@@ -1,6 +1,6 @@
 package astaro.midmmo.core.data;
 
-import astaro.midmmo.core.connectors.dbConnector;
+import astaro.midmmo.core.data.connectors.dbConnector;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -21,13 +21,13 @@ public class CreateTable {
                 query = """
                         CREATE TABLE IF NOT EXISTS stats(
                          id INT PRIMARY KEY AUTO_INCREMENT,
-                         user_id INT NOT NULL,
+                         user_id VARCHAR(255) NOT NULL,
                          name VARCHAR(255) NOT NULL,
                          playerRace VARCHAR(255) NOT NULL,
                          playerClass VARCHAR(255) NOT NULL,
-                         playerExp int,
-                         playerLevel int,
-                         playerStats int
+                         playerExp float NOT NULL,
+                         playerLevel int NOT NULL,
+                         playerStats json NOT NULL
                         );""";
                 stmt.executeUpdate(query);
                 System.out.println("Connected successfully. Table is OK. Sit and rest.");

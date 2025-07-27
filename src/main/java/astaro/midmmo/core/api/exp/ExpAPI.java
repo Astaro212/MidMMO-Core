@@ -15,4 +15,13 @@ public interface ExpAPI {
 
     void checkAndUpdateLevel();
 
+    //Implements new methods
+    default float getExpToNextLevel() {
+        return 0;
+    }
+
+    default float getProgressToNextLevel() {
+        return 0;
+    }
+
 }
