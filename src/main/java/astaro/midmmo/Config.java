@@ -13,11 +13,11 @@ public class Config {
 
 
     private static final ModConfigSpec.ConfigValue<String> dbType = BUILDER.comment("Type of Database (MySQl/SQLite/MariaDB/PostgreSQL)").define("Type:", "MariaDB");
-    private static final ModConfigSpec.ConfigValue<String> hostname = BUILDER.comment("Database Host").define("hostname:", "194.147.90.60");
+    private static final ModConfigSpec.ConfigValue<String> hostname = BUILDER.comment("Database Host").define("hostname:", "");
     private static final ModConfigSpec.ConfigValue<String> port = BUILDER.comment("Database Port.").define("port:", "3306");
-    private static final ModConfigSpec.ConfigValue<String> dbName = BUILDER.comment("Name of the Database.").define("database:", "mserver");
-    private static final ModConfigSpec.ConfigValue<String> dbUser = BUILDER.comment("Database username.").define("username:", "minecraft");
-    private static final ModConfigSpec.ConfigValue<String> dbPassword = BUILDER.comment("Database password.").define("password:", "S4k3m9Yf1A");
+    private static final ModConfigSpec.ConfigValue<String> dbName = BUILDER.comment("Name of the Database.").define("database:", "");
+    private static final ModConfigSpec.ConfigValue<String> dbUser = BUILDER.comment("Database username.").define("username:", "");
+    private static final ModConfigSpec.ConfigValue<String> dbPassword = BUILDER.comment("Database password.").define("password:", "");
 
     static final ModConfigSpec SPEC = BUILDER.build();
 
