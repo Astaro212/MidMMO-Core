@@ -16,8 +16,6 @@ import java.util.UUID;
 
 public class LoginHandler {
 
-    protected static PlayerData cachedData;
-
     //Checks if player exists in site database
     public static void onPlayerLogin(@NotNull ServerPlayer player) {
         String username = player.getName().getString();
@@ -36,7 +34,7 @@ public class LoginHandler {
                 } else {
                     //else create new player profile with stats and level
                     serverPlayer.setGameMode(GameType.SPECTATOR);
-                    PacketDistributor.sendToPlayer(serverPlayer, new RaceMenuPacket(serverPlayer.containerMenu.containerId,"", ""));
+                    PacketDistributor.sendToPlayer(serverPlayer, new RaceMenuPacket(serverPlayer.containerMenu.containerId, "", ""));
                 }
             });
         } else {
@@ -54,24 +52,18 @@ public class LoginHandler {
         PlayerStatsManager manager = new PlayerStatsManager();
         manager.setPlayerLevel(playerExp.getPlayerLevel());
 
-        cachedData.setPlayerRace(data.getPlayerRace());
-        cachedData.setPlayerClass(data.getPlayerClass());
-        cachedData.setPlayerLevel(playerExp.getPlayerLevel());
-        cachedData.setPlayerExp(playerExp.getExperience());
-        cachedData.setPlayerChar(data.getPlayerChar());
+        PlayerDataCache.put(player.getUUID(), data);
 
     }
 
     //Actions on player exit
     public static void onPlayerExit(@NotNull ServerPlayer player) {
-        if (player instanceof ServerPlayer serverPlayer) {
-            PlayerData cachedData = PlayerDataCache.get(serverPlayer.getUUID());
-            if (cachedData != null) {
-                PlayerData.updateDataAsync(serverPlayer.getName().getString(), serverPlayer.getUUID(),
-                        cachedData.getPlayerLvl(), cachedData.getPlayerExp(), cachedData.getPlayerChar());
-            }
+        PlayerData cachedData = PlayerDataCache.get(player.getUUID());
+        if (cachedData != null) {
+            PlayerData.updateDataAsync(player.getName().getString(), player.getUUID(),
+                    cachedData.getPlayerLvl(), cachedData.getPlayerExp(), cachedData.getPlayerChar());
+            PlayerDataCache.remove(player.getUUID());
         }
     }
-
 
 }

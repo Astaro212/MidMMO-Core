@@ -175,3 +175,4 @@ tasks.withType(JavaCompile).configureEach {
             'org.slf4j/org.slf4j.spi=neoforge'
     ]
 }
+

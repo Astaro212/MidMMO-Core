@@ -1,18 +1,21 @@
 package astaro.midmmo.core.listeners;
 
-import astaro.midmmo.core.api.events.DamageEvent;
+import astaro.midmmo.core.attributes.Damage.CustomDamageSources;
 import astaro.midmmo.core.attributes.Damage.DamageSystem;
-import astaro.midmmo.core.attributes.Damage.DamageTypes;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.damagesource.DamageScaling;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 
-import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @EventBusSubscriber(modid = "midmmo")
 public class DamageListener {
@@ -21,24 +24,28 @@ public class DamageListener {
     public static void onPhysicalDamage(AttackEntityEvent event){
 
         LivingEntity attacker = event.getEntity();
-        LivingEntity target = event.getEntity();
+        LivingEntity target = (LivingEntity) event.getTarget();
         event.setCanceled(true);
-        // Создаем тип физического урона
-        DamageTypes damageType = new DamageTypes(
-                ResourceLocation.fromNamespaceAndPath("midmmo", "physical"),
-                DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
-                1.0f,
-                Set.of(DamageTypes.DamageFlag.PHYSICAL)
+        //Create phys.damage
+
+        CustomDamageSources damageSource = new CustomDamageSources.Builder(attacker.level().registryAccess()
+                .lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.PLAYER_ATTACK))
+                .causingEntity(attacker)
+                .addFlag(CustomDamageSources.DamageFlag.PHYSICAL)
+                .build();
+
+        // Create damage system
+        DamageSystem system = new DamageSystem(attacker, target, damageSource);
+        float damage = system.calculateDmg();
+
+        // Apply damage
+        Logger.getLogger(DamageListener.class.getName()).log(Level.INFO, String.valueOf(damage));
+        LivingDamageEvent.Pre damageEvent = new LivingDamageEvent.Pre(
+                target, new DamageContainer(damageSource, damage)
         );
+        NeoForge.EVENT_BUS.post(damageEvent);
+        target.hurt(damageSource,damageEvent.getContainer().getNewDamage());
 
-        // Создаем систему расчета урона
-        DamageSystem system = new DamageSystem(attacker, target, damageType);
 
-        // Рассчитываем модифицированный урон
-        system.calculateDmg();
-        target.getHealth();
-        double healthLeft = target.getHealth() - system.calculateDmg();
-        DamageEvent applyDmg = new DamageEvent(target,attacker, (float) healthLeft, damageType );
-        NeoForge.EVENT_BUS.post(applyDmg);
     }
 }

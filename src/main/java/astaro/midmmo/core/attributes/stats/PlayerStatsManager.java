@@ -1,8 +1,7 @@
 package astaro.midmmo.core.attributes.stats;
 
-import astaro.midmmo.core.api.stats.StatsAPI;
+import astaro.midmmo.api.stats.StatsAPI;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,10 +34,7 @@ public class PlayerStatsManager implements StatsAPI {
 
     public PlayerStatsManager(){}
 
-    private ServerPlayer player;
-
     public PlayerStatsManager(ServerPlayer player) {
-        this.player = player;
         initializeBaseStats();
     }
 

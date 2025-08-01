@@ -1,6 +1,6 @@
-package astaro.midmmo.core.api;
+package astaro.midmmo.api;
 
-import astaro.midmmo.core.api.exp.ExpAPI;
+import astaro.midmmo.api.exp.ExpAPI;
 
 //register player methods
 public interface PlayerAPI {

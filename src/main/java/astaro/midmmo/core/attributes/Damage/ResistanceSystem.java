@@ -6,7 +6,7 @@ import net.minecraft.world.entity.LivingEntity;
 public class ResistanceSystem {
     public static float applyDefenses(LivingEntity target,
                                       float incomingDamage,
-                                      DamageTypes type) {
+                                      CustomDamageSources type) {
         Double resistance = getResistance(target, type);
         Double penetration = getPenetration(target, type);
 
@@ -14,7 +14,7 @@ public class ResistanceSystem {
         return incomingDamage * (1 - effectiveResist / 100f);
     }
 
-    private static Double getResistance(LivingEntity target, DamageTypes type) {
+    private static Double getResistance(LivingEntity target, CustomDamageSources type) {
         AttributeProvider provider = AttributeProvider.createFor(target);
         if (type.isMagical()) return provider.getStat("magic_resist");
         if (type.isCritical()) return provider.getStat("crit_resist");
@@ -22,7 +22,7 @@ public class ResistanceSystem {
         return 1.0;
     }
 
-    private static Double getPenetration(LivingEntity attacker, DamageTypes type) {
+    private static Double getPenetration(LivingEntity attacker, CustomDamageSources type) {
         AttributeProvider provider = AttributeProvider.createFor(attacker);
         if (type.isMagical()) return provider.getStat("resistance_penetration");
         if (type.isPhysical()) return provider.getStat("armor_penetration");

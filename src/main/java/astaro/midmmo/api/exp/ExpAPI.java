@@ -1,4 +1,4 @@
-package astaro.midmmo.core.api.exp;
+package astaro.midmmo.api.exp;
 
 //Exp interface for future dependencies
 public interface ExpAPI {

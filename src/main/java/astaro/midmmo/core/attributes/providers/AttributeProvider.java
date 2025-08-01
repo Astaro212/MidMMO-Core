@@ -1,6 +1,6 @@
 package astaro.midmmo.core.attributes.providers;
 
-import astaro.midmmo.core.api.stats.StatsAPI;
+import astaro.midmmo.api.stats.StatsAPI;
 import astaro.midmmo.core.attributes.stats.PlayerStatsManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;

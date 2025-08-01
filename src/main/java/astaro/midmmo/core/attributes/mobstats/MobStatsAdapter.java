@@ -1,6 +1,6 @@
 package astaro.midmmo.core.attributes.mobstats;
 
-import astaro.midmmo.core.api.stats.StatsAPI;
+import astaro.midmmo.api.stats.StatsAPI;
 import net.minecraft.nbt.CompoundTag;
 
 import java.util.Map;

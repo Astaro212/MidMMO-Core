@@ -2,14 +2,6 @@ package astaro.midmmo.core.GUI.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Overlay;
-import net.minecraft.server.packs.OverlayMetadataSection;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RenderBlockScreenEffectEvent;
-import net.neoforged.neoforge.client.event.RenderGuiEvent;
-import org.spongepowered.asm.mixin.MixinEnvironment;
 
 
 public class PlayerHUD {

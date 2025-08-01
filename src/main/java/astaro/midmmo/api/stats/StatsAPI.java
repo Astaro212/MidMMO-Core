@@ -1,4 +1,4 @@
-package astaro.midmmo.core.api.stats;
+package astaro.midmmo.api.stats;
 
 
 import java.util.Map;

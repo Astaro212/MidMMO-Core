@@ -1,9 +1,8 @@
 package astaro.midmmo.core.expsystem;
 
-import astaro.midmmo.core.api.exp.ExpAPI;
+import astaro.midmmo.api.exp.ExpAPI;
 import astaro.midmmo.core.data.PlayerData;
 import astaro.midmmo.core.data.cache.PlayerDataCache;
-import net.minecraft.server.level.ServerPlayer;
 
 import java.util.UUID;
 import java.util.logging.Level;
@@ -23,7 +22,7 @@ public class PlayerExp implements ExpAPI {
 
     //Calc exp
     static {
-        for (int lvl = 0; lvl <= MAX_LEVEL_CAP; lvl++) {
+        for (int lvl = 1; lvl < MAX_LEVEL_CAP; lvl++) {
             EXP_REQUIRED[lvl] = calculateLvl(lvl + 1);
         }
     }
