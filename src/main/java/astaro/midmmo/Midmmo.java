@@ -3,6 +3,7 @@ package astaro.midmmo;
 import astaro.midmmo.core.commands.LevelAndExp;
 import astaro.midmmo.core.commands.RegisterCommands;
 import astaro.midmmo.core.data.CreateTable;
+import astaro.midmmo.core.expsystem.MobType;
 import astaro.midmmo.core.registries.MenuRegistry;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.logging.LogUtils;
@@ -113,6 +114,7 @@ public class Midmmo {
         } else {
             LOGGER.info("Database already exists. All is OK. Starting logic.");
         }
+        MobType.initializeMobs(event.getServer());
     }
 
     public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher){

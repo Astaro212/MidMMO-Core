@@ -30,18 +30,19 @@ public class ExpListeners {
         //Added check for non-player
         if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
 
-        MobType mobType = MobType.fromEntity(event.getEntity());
-        if (mobType == null) return;
+        LivingEntity entity = event.getEntity();
 
         //Update syntacsis
         PlayerExp playerExp = getOrCreateData(player.getUUID(), player.getName().getString());
-        expGained = mobType.getExp();
-
+        expGained = MobType.getMobExp(entity.getType()) * MobType.fromEntity(entity).getExpMultiplier();
+        Component mobName = entity.getDisplayName() != null
+                ? entity.getDisplayName()
+                : Component.literal(entity.getType().getDescription().getString());
 
         playerExp.addExperience(expGained);
         playerExp.checkAndUpdateLevel();
         player.sendSystemMessage(EXP_MESSAGE.copy().append(String.format(" %.1f ", expGained))
-                .append(Objects.requireNonNull(event.getEntity().getDisplayName())));
+                .append(mobName));
 
     }
 
@@ -54,11 +55,6 @@ public class ExpListeners {
         } else {
             return new PlayerExp(uuid, playerName, 1, 0f);
         }
-    }
-
-    private static float calculateExpWithBonuses(ServerPlayer player, MobType mobType){
-        float expMultiplier = 1.0f;
-        return mobType.getExp() * expMultiplier;
     }
 
 }
