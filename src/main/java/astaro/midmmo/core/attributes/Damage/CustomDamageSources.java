@@ -11,6 +11,7 @@ import java.util.Set;
 public class CustomDamageSources extends DamageSource  {
 
     private final Set<DamageFlag> flags;
+    private ElementalSystem.ElementType elementType = ElementalSystem.ElementType.NONE;
 
     protected CustomDamageSources(Holder<DamageType> damageType, Entity directEntity, Entity causingEntity, Set<DamageFlag> flags) {
         super(damageType, directEntity, causingEntity);
@@ -21,12 +22,17 @@ public class CustomDamageSources extends DamageSource  {
         return new CustomDamageSources.Builder(damageType);
     }
 
+    public CustomDamageSources setElement(ElementalSystem.ElementType element) {
+        this.elementType = element != null ? element : ElementalSystem.ElementType.NONE;
+        this.flags.add(DamageFlag.ELEMENTAL_DAMAGE);
+        return this;
+    }
+
     public enum DamageFlag {
         PHYSICAL("physical"),
         MAGIC_BASED("magic"),
         APPLY_EFFECT("effect"),
-        ELEMENTAL_DAMAGE("elemental"),
-        CRITICAL_DAMAGE("critical");
+        ELEMENTAL_DAMAGE("elemental");
 
         private final String tag;
 
@@ -51,12 +57,16 @@ public class CustomDamageSources extends DamageSource  {
         return flags.contains(DamageFlag.ELEMENTAL_DAMAGE);
     }
 
-    public boolean isCritical() {
-        return flags.contains(DamageFlag.CRITICAL_DAMAGE);
-    }
-
     public boolean isEffect(){
         return flags.contains(DamageFlag.APPLY_EFFECT);
+    }
+
+    public ElementalSystem.ElementType getElementType() {
+        return this.elementType;
+    }
+
+    public boolean hasElement() {
+        return this.elementType != ElementalSystem.ElementType.NONE;
     }
 
     public static class Builder {
@@ -64,6 +74,7 @@ public class CustomDamageSources extends DamageSource  {
         private Entity directEntity;
         private Entity causingEntity;
         private final EnumSet<DamageFlag> flags = EnumSet.noneOf(DamageFlag.class);
+        private ElementalSystem.ElementType elementType = ElementalSystem.ElementType.NONE;
 
         public Builder(Holder<DamageType> damageType) {
             this.damageType = damageType;
@@ -83,9 +94,17 @@ public class CustomDamageSources extends DamageSource  {
             this.flags.add(flag);
             return this;
         }
+        public Builder setElement(ElementalSystem.ElementType element) {
+            this.elementType = element;
+            return this;
+        }
 
         public CustomDamageSources build() {
-            return new CustomDamageSources(damageType, directEntity, causingEntity, flags);
+            CustomDamageSources source = new CustomDamageSources(damageType, directEntity, causingEntity, flags);
+            if (elementType != ElementalSystem.ElementType.NONE) {
+                source.setElement(elementType);
+            }
+            return source;
         }
     }
 }

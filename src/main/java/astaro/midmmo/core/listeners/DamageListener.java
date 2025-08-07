@@ -2,6 +2,7 @@ package astaro.midmmo.core.listeners;
 
 import astaro.midmmo.core.attributes.Damage.CustomDamageSources;
 import astaro.midmmo.core.attributes.Damage.DamageSystem;
+import astaro.midmmo.core.attributes.Damage.ElementalSystem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,26 +27,33 @@ public class DamageListener {
         LivingEntity attacker = event.getEntity();
         LivingEntity target = (LivingEntity) event.getTarget();
         event.setCanceled(true);
-        //Create phys.damage
+        float damage = 0.1F;
 
-        CustomDamageSources damageSource = new CustomDamageSources.Builder(attacker.level().registryAccess()
+        //Create phys.damage
+        CustomDamageSources physicalDamage = new CustomDamageSources.Builder(attacker.level().registryAccess()
                 .lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.PLAYER_ATTACK))
                 .causingEntity(attacker)
+                .setElement(ElementalSystem.ElementType.NONE)
                 .addFlag(CustomDamageSources.DamageFlag.PHYSICAL)
                 .build();
 
         // Create damage system
-        DamageSystem system = new DamageSystem(attacker, target, damageSource);
-        float damage = system.calculateDmg();
+        DamageSystem system = new DamageSystem(attacker, target, physicalDamage);
+        if(system.isBlock()) {
+            damage = system.CalculateDirtyStats(target) * 0.6f;
+        } else if(system.isBlock()) {
+            damage = 0.2F;
+        } else {
+            damage = system.CalculateDirtyStats(target);
+        }
 
         // Apply damage
         Logger.getLogger(DamageListener.class.getName()).log(Level.INFO, String.valueOf(damage));
         LivingDamageEvent.Pre damageEvent = new LivingDamageEvent.Pre(
-                target, new DamageContainer(damageSource, damage)
+                target, new DamageContainer(physicalDamage, damage)
         );
         NeoForge.EVENT_BUS.post(damageEvent);
-        target.hurt(damageSource,damageEvent.getContainer().getNewDamage());
 
-
+        target.hurt(physicalDamage,damageEvent.getContainer().getNewDamage());
     }
 }

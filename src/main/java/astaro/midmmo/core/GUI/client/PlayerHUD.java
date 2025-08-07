@@ -2,6 +2,7 @@ package astaro.midmmo.core.GUI.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.neoforged.bus.api.SubscribeEvent;
 
 
 public class PlayerHUD {
@@ -9,7 +10,6 @@ public class PlayerHUD {
     private static final Minecraft minecraft = Minecraft.getInstance();
 
     public static void render(GuiGraphics graphics, float partialTick) {
-
 
     }
 

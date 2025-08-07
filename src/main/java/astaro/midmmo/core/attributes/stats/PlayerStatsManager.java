@@ -51,7 +51,8 @@ public class PlayerStatsManager implements StatsAPI {
                 "resistance_penetration", 1.0D,
                 "mana_regen", 1.0D,
                 "dodge", 1.0D,
-                "regen", 2.0D
+                "regen", 2.0D,
+                "critical_resist", 1.0D
         ));
 
 
