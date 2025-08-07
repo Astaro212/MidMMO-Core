@@ -19,7 +19,7 @@ import static astaro.midmmo.Midmmo.MODID;
 @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.GAME)
 public class ExpListeners {
 
-    private static final Component EXP_MESSAGE = Component.translatable("message.midmmo.exp_gained");
+    private static final Component EXP_MESSAGE = Component.translatable("Exp gained: ");
 
     //Mob kill
     @SubscribeEvent
