@@ -79,7 +79,7 @@ public class PlayerStatsManager implements StatsAPI {
         if(!main_stats.containsKey(stat) || getAvailableStatPoints()< amount) return false;
 
         base_stats.merge(stat, amount, Double::sum);
-        BaseStats.recalculateStats();
+        new BaseStats(this);
         return true;
     }
 
@@ -116,6 +116,7 @@ public class PlayerStatsManager implements StatsAPI {
     public void addStat(String stat, double value) {
         if (main_stats.containsKey(stat)) {
             increaseBaseStat(stat, value);
+            new BaseStats(this);
         } else {
             addBonus(stat, value);
         }

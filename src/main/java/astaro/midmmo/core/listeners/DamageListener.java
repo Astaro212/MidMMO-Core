@@ -41,7 +41,7 @@ public class DamageListener {
         DamageSystem system = new DamageSystem(attacker, target, physicalDamage);
         if(system.isBlock()) {
             damage = system.CalculateDirtyStats(target) * 0.6f;
-        } else if(system.isBlock()) {
+        } else if(system.isEvasion()) {
             damage = 0.2F;
         } else {
             damage = system.CalculateDirtyStats(target);

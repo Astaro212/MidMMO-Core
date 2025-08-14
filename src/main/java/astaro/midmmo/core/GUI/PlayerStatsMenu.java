@@ -11,7 +11,6 @@ public class PlayerStatsMenu extends Screen {
     private static final ResourceLocation WINDOW_LOCATION =
             ResourceLocation.fromNamespaceAndPath("MidMMO", "textures/gui/container/stats_container.png");
 
-    protected PlayerDataCache cachedData = new PlayerDataCache();
 
     public static final int WINDOW_WIDTH = 252;
     public static final int WINDOW_HEIGHT = 256;
