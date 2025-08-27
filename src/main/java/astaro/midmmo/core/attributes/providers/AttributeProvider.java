@@ -2,6 +2,7 @@ package astaro.midmmo.core.attributes.providers;
 
 import astaro.midmmo.api.stats.StatsAPI;
 import astaro.midmmo.core.attributes.stats.PlayerStatsManager;
+import astaro.midmmo.core.data.cache.PlayerDataCache;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +22,6 @@ public class AttributeProvider implements StatsAPI {
         DEFAULT_MOB_STATS.put("attack_damage", 2.0);
     }
 
-    @Nullable
     private final PlayerStatsManager playerStats;
     private final Map<String, Double> mob_stats;
 
@@ -68,6 +68,8 @@ public class AttributeProvider implements StatsAPI {
     // Factory method for creating appropriate provider
     public static AttributeProvider createFor(LivingEntity entity) {
         if (entity instanceof ServerPlayer player) {
+            PlayerStatsManager stats = PlayerDataCache.get(player.getUUID()).getPlayerChar();
+            if (stats != null) return new AttributeProvider(stats);
             return new AttributeProvider(new PlayerStatsManager(player));
         }
 

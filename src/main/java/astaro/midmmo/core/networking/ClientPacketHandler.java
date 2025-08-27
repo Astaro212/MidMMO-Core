@@ -14,22 +14,12 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
 public class ClientPacketHandler {
 
-    static int windowId;
-    static UUID uuid;
-    static int level;
-    static float exp;
-    static Map<String, Double> stats = new ConcurrentHashMap<>();
-    static String playerClazz;
-    static String playerRace;
-    static long timestamp;
 
     @OnlyIn(Dist.CLIENT)
     public static void execute() {
@@ -45,7 +35,7 @@ public class ClientPacketHandler {
 
     public static void handleDataOnNetwork(final RaceMenuPacket data, final IPayloadContext context) {
         context.enqueueWork(() -> {
-            windowId = data.windowId();
+            data.windowId();
         }).exceptionally(e -> {
             // Handle exception
             context.disconnect(Component.translatable("midmmo.networking.failed", e.getMessage()));
@@ -56,19 +46,18 @@ public class ClientPacketHandler {
 
     public static void syncClientData(final PlayerDataSync data, final IPayloadContext context) {
         context.enqueueWork(() -> {
-            windowId = data.windowId();
             try {
                 ClientDataCache.updatePlayerData(
-                        uuid = data.uuid(),
-                        level = data.level(),
-                        exp = data.exp(),
-                        playerClazz = data.playerClazz(),
-                        playerRace = data.playerRace(),
-                        stats = data.stats()
+                        data.uuid(),
+                        data.level(),
+                        data.exp(),
+                        data.playerClazz(),
+                        data.playerRace(),
+                        data.stats()
                 );
 
                 if (isCurrentPlayer(data.uuid())) {
-                    openStatsMenu(windowId);
+                    openStatsMenu(data.winId());
                 }
             } catch (Exception e) {
                 Logger.getLogger("Stats Menu").log(Level.SEVERE, "Failed to sync data" + e);

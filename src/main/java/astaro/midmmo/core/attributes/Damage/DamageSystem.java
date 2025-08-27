@@ -24,27 +24,36 @@ public class DamageSystem {
         assert attackerStats != null;
         assert victimStats != null;
         if (damageTypes.isPhysical()) {
-            Double damage = attackerStats.getStat("physical_damage");
-            Double str = attackerStats.getStat("str");
-            return dmg = (float) (damage + str * 0.08);
+
+            double physDamage = attackerStats.getStat("physical_damage");
+            double defencePenetration = attackerStats.getStat("armor_penetration");
+
+            double armor = victimStats.getStat("armor");
+            double effectiveArmor = ((armor - (armor * (defencePenetration/100)))/1000);
+
+            return dmg = (float) (physDamage - (physDamage * effectiveArmor));
         } else if (damageTypes.isMagical()) {
-            Double magicDamage = attackerStats.getStat("magic_damage");
-            Double intellect = attackerStats.getStat("int");
-            return dmg = (float) (magicDamage + (magicDamage * (intellect * 0.01)));
-        } else return 0.1F;
+
+            double magicDamage = attackerStats.getStat("magic_damage");
+            double resistPenetration = attackerStats.getStat("resistance_penetration");
+
+            double magicResistance = victimStats.getStat("magic_resist");
+            double effectiveResist = ((magicResistance - (magicResistance * (resistPenetration/100)))/1000);
+
+            return dmg = (float) (magicDamage - (magicDamage * effectiveResist));
+        } else return 1.0F;
     }
 
-    public Float calculateWithModifiers() {
+    public Float calculateWithModifiers(float incomingDamage) {
         if (isCritical()) {
             double critDamage = attackerStats.getStat("critical_damage") / 100.0F;
-            double critResist = attackerStats.getStat("critical_resist") / 100.0F;
-            Double luck = attackerStats.getStat("luck");
-            return dmg = (float) ((calculateCleanDmg() + (calculateCleanDmg() *
-                    ((critDamage + (luck * 0.25F) / 100.0F) - critResist))));
+            double critResist = victimStats.getStat("critical_resist") / 100.0F;
+            return dmg = (float) (incomingDamage + (incomingDamage *
+                    (critDamage - critResist)));
         } else if (damageTypes.isElemental()) {
             ElementalSystem.ElementType element = damageTypes.getElementType();
-            Double elementalDmg = attackerStats.getStat(ElementalSystem.fromStringSafe(element.name()).getElementType());
-            return dmg = (float) (elementalDmg / 100.0F);
+            double elementalDmg = attackerStats.getStat(ElementalSystem.fromStringSafe(element.name()).getElementType()) / 100.0F;
+            return dmg = (float) (incomingDamage * elementalDmg);
         } else {
             return 0.1F;
         }
@@ -52,9 +61,9 @@ public class DamageSystem {
 
     public Float CalculateDirtyStats(LivingEntity target) {
         if (isCritical() || damageTypes.isElemental()) {
-            return ResistanceSystem.applyDefences(target, calculateWithModifiers(), damageTypes);
+            return dmg = calculateWithModifiers(calculateCleanDmg());
         }
-        return  ResistanceSystem.applyDefences(target, calculateCleanDmg(), damageTypes);
+        return dmg = calculateCleanDmg();
     }
 
     public boolean isCritical() {
@@ -74,6 +83,10 @@ public class DamageSystem {
         blockChance = Math.min(Math.max(blockChance, 0.1), 0.95);
         return ThreadLocalRandom.current().nextDouble() < blockChance;
     }
+
+
+
+
 
 }
 

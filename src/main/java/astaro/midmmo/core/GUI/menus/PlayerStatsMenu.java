@@ -34,14 +34,14 @@ public class PlayerStatsMenu extends Screen {
 
     public static final int WINDOW_WIDTH = 252;
     public static final int WINDOW_HEIGHT = 256;
-    public static final float WINDOW_LOCATION_X = 0.3F;
-    public static final float WINDOW_LOCATION_Y = 0.2F;
+    public static final float WINDOW_LOCATION_X = 0.2F;
+    public static final float WINDOW_LOCATION_Y = 0.03F;
 
     int leftPos;
     int topPos;
 
 
-    public void showPlayerMenu(){
+    public void showPlayerMenu() {
 
     }
 
@@ -51,8 +51,8 @@ public class PlayerStatsMenu extends Screen {
         UUID uuid = Minecraft.getInstance().player.getUUID();
         ClientDataCache.ClientData clientData = ClientDataCache.getClientData(uuid);
 
-        if(clientData != null && clientData.stats() != null){
-            for (Map.Entry<String, Double> statEntry : clientData.stats().entrySet()){
+        if (clientData != null && clientData.stats() != null) {
+            for (Map.Entry<String, Double> statEntry : clientData.stats().entrySet()) {
                 String statName = statEntry.getKey();
                 Double statValue = statEntry.getValue();
 
@@ -66,7 +66,12 @@ public class PlayerStatsMenu extends Screen {
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-
+        guiGraphics.blit(RenderType.GUI_TEXTURED, WINDOW_LOCATION,
+                (int) (clientWidth * WINDOW_LOCATION_X), (int) (clientHeight * WINDOW_LOCATION_Y),
+                0, 0,
+                WINDOW_WIDTH, WINDOW_HEIGHT,
+                WINDOW_WIDTH, WINDOW_HEIGHT
+        );
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 

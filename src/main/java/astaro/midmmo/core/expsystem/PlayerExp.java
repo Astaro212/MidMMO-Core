@@ -12,7 +12,7 @@ public class PlayerExp implements ExpAPI {
 
     private static final int MAX_LEVEL_CAP = 99;
 
-    private static final float[] EXP_REQUIRED = new float[MAX_LEVEL_CAP];
+    private static final float[] EXP_REQUIRED = new float[MAX_LEVEL_CAP + 1];
 
 
     private int level;
@@ -87,8 +87,11 @@ public class PlayerExp implements ExpAPI {
     public void checkAndUpdateLevel() {
         boolean leveledUp = false;
 
-        while (level < MAX_LEVEL_CAP && exp >= getExpToNextLevel()) {
-            exp -= getExpToNextLevel();
+        while (level < MAX_LEVEL_CAP) {
+            float expNeeded = getExpToNextLevel();
+            if(exp < expNeeded) break;
+
+            exp -= expNeeded;
             level++;
             leveledUp = true;
         }

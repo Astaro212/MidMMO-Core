@@ -19,7 +19,7 @@ public class MobManager {
         MobStatsConfig config = MOB_CONFIGS.get(mobType);
 
         if (config != null) {
-            mob.getPersistentData().put("midmmo", config.toNbt(5));
+            mob.getPersistentData().put("midmmo", config.toNbt(1));
         }
     }
 

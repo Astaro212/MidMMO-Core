@@ -14,6 +14,7 @@ public class StatSerializer {
 
     public static PlayerStatsManager deserizalize(String json) {
         PlayerStatsDTO playerStats = gson.fromJson(json, PlayerStatsDTO.class);
-        return playerStats.applyToPlayerStats(new PlayerStatsManager());
+        PlayerStatsManager manager = new PlayerStatsManager();
+        return playerStats.applyToPlayerStats(manager);
     }
 }

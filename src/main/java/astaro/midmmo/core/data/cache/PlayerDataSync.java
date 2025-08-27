@@ -17,7 +17,7 @@ public record PlayerDataSync(UUID uuid,
                              String playerClazz,
                              Map<String, Double> stats,
                              long timestamp,
-                             int windowId) implements CustomPacketPayload {
+                             int winId) implements CustomPacketPayload {
 
     public static Type<PlayerDataSync> TYPE = new Type<>(
             ResourceLocation.fromNamespaceAndPath("midmmo", "show_stats")
@@ -41,7 +41,7 @@ public record PlayerDataSync(UUID uuid,
             ByteBufCodecs.STRING_UTF8,
             PlayerDataSync::playerClazz,
 
-            new StreamCodec<ByteBuf, Map<String, Double>>() {
+            new StreamCodec<>() {
                 @Override
                 public Map<String, Double> decode(ByteBuf buf) {
                     int size = buf.readInt();
@@ -69,7 +69,7 @@ public record PlayerDataSync(UUID uuid,
             ByteBufCodecs.LONG,
             PlayerDataSync::timestamp,
             ByteBufCodecs.INT,
-            PlayerDataSync::windowId,
+            PlayerDataSync::winId,
             PlayerDataSync::new
     );
 
@@ -92,7 +92,7 @@ public record PlayerDataSync(UUID uuid,
                 data.getExp(),
                 data.getPlayerRace(),
                 data.getPlayerClass(),
-                data.getPlayerChar().getStats(),
+                data.getPlayerChar(),
                 System.currentTimeMillis(), // Current server time
                 (int) System.currentTimeMillis()
         );
@@ -124,7 +124,7 @@ public record PlayerDataSync(UUID uuid,
         }
 
         ClientDataCache.ClientData clientData =
-                new ClientDataCache.ClientData(level, exp, playerRace, playerClazz, stats, System.currentTimeMillis(),windowId);
+                new ClientDataCache.ClientData(level, exp, playerRace, playerClazz, stats, System.currentTimeMillis(), winId);
 
         ClientDataCache.updateFromServer(uuid, clientData);
     }

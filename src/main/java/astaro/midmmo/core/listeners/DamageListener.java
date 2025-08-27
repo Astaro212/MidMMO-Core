@@ -24,11 +24,11 @@ public class DamageListener {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onPhysicalDamage(AttackEntityEvent event){
-
+        if (!(event.getTarget() instanceof LivingEntity target)) return;
         LivingEntity attacker = event.getEntity();
-        LivingEntity target = (LivingEntity) event.getTarget();
+
         event.setCanceled(true);
-        float damage = 0.1F;
+        float damage;
 
         //Create phys.damage
         CustomDamageSources physicalDamage = new CustomDamageSources.Builder(attacker.level().registryAccess()

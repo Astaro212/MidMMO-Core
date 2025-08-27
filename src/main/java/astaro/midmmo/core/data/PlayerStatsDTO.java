@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PlayerStatsDTO {
 
     private final String schemaVersion = "1.0";
-    private Map<String, Double> stats;
+    private final Map<String, Double> stats ;
 
     //Validate and show that we are creating json for db
     @JsonCreator
@@ -18,8 +18,11 @@ public class PlayerStatsDTO {
     }
 
     //Apply to player
-    public PlayerStatsManager applyToPlayerStats(PlayerStatsManager stats) {
-        return stats;
+    public PlayerStatsManager applyToPlayerStats(PlayerStatsManager manager) {
+        if(stats != null){
+            manager.setBaseStats(stats);
+        }
+        return manager;
     }
 
     //Added validation for further

@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 public class UserFinder {
 
     private static final Object lockConn = new Object();
-    private static final dbConnector dbc = new dbConnector();
 
     /**
      * Return username if he exists.
@@ -23,7 +22,7 @@ public class UserFinder {
     @Nullable
     public static GameProfile findUser(String username) {
         synchronized (lockConn) {
-            try (Connection conn = dbc.connect()) {
+            try (Connection conn = dbConnector.connect()) {
                 String query = "SELECT username, accessToken, uuid FROM users WHERE username = ? ;";
                 try (PreparedStatement stmt = conn.prepareStatement(query)) {
                     stmt.setString(1, username);
@@ -43,7 +42,7 @@ public class UserFinder {
                     }
                 }
             } catch (SQLException e) {
-                Logger.getLogger(UserFinder.class.getName()).log(Level.WARNING, e.toString());
+                Logger.getLogger(UserFinder.class.getName()).log(Level.WARNING,"SQL Error:" + e.getMessage());
                 return null;
             }
         }

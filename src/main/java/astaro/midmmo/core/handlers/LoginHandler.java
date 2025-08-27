@@ -12,8 +12,9 @@ import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class LoginHandler {
@@ -23,21 +24,32 @@ public class LoginHandler {
         String username = player.getName().getString();
         UUID uuid = player.getUUID();
         //Checks player cached data
-        PlayerData cachedData = PlayerDataCache.get(uuid);
-        if (cachedData != null) {
+        if (PlayerDataCache.contains(uuid)) {
+            PlayerData cachedData = PlayerDataCache.get(uuid);
             applyPlayerData(player, cachedData);
+            return;
         }
-        //If no cached data -> get playerData from database and apply it to the cache
-        if (player instanceof ServerPlayer serverPlayer && UserFinder.findUser(username) != null) {
+        //If no data in database -> create player
+        if (UserFinder.findUser(username) != null) {
             PlayerData.getDataAsync(username, uuid).thenAccept(playerData -> {
-                if (playerData != null) {
-                    PlayerDataCache.put(uuid, playerData);
-                    applyPlayerData(player, playerData);
-                } else {
-                    //else create new player profile with stats and level
-                    serverPlayer.setGameMode(GameType.SPECTATOR);
-                    PacketDistributor.sendToPlayer(serverPlayer, new RaceMenuPacket(serverPlayer.containerMenu.containerId, "", ""));
+                if (!player.isRemoved() && player.server.isRunning()) {
+                    if (playerData == null) {
+                        player.setGameMode(GameType.SPECTATOR);
+                        PacketDistributor.sendToPlayer(player, new RaceMenuPacket(player.containerMenu.containerId, "", ""));
+                    } else {
+                        //else applies playerData with stats and level to the cache
+                        synchronized (PlayerDataCache.class) {
+                            // Проверяем, что данные еще не были загружены другим потоком
+                            if (PlayerDataCache.get(uuid) == null) {
+                                applyPlayerData(player, playerData);
+                            }
+                        }
+                    }
                 }
+            }).exceptionally(throwable -> {
+                Logger.getLogger(LoginHandler.class.getName()).log(Level.SEVERE,
+                        "Failed to load data for " + username, throwable);
+                return null;
             });
         } else {
             //If no user profile on db -> disconnects player
@@ -49,10 +61,16 @@ public class LoginHandler {
 
     //Apply player stats and exp
     private static void applyPlayerData(ServerPlayer player, @NotNull PlayerData data) {
+        PlayerStatsManager manager = data.getPlayerChar();
+        if (manager == null) {
+            manager = new PlayerStatsManager(player); // Создаем новый если null
+            data.setPlayerChar(manager);
+        }
+
         PlayerExp playerExp = new PlayerExp(player.getUUID(), player.getName().
                 getString(), data.getPlayerLvl(), data.getPlayerExp());
-        PlayerStatsManager manager = data.getPlayerChar();
         manager.setPlayerLevel(playerExp.getPlayerLevel());
+
         PlayerDataCache.put(player.getUUID(), data);
         player.sendSystemMessage(Component.translatable("midmmo.user_loaded", player.getName()).withStyle(ChatFormatting.GREEN));
     }
@@ -62,8 +80,12 @@ public class LoginHandler {
         PlayerData cachedData = PlayerDataCache.get(player.getUUID());
         if (cachedData != null) {
             PlayerData.updateDataAsync(player.getName().getString(), player.getUUID(),
-                    cachedData.getPlayerLvl(), cachedData.getPlayerExp(), cachedData.getPlayerChar());
-            PlayerDataCache.remove(player.getUUID());
+                            cachedData.getPlayerLvl(), cachedData.getPlayerExp(), cachedData.getPlayerChar())
+                    .thenRun(() -> PlayerDataCache.remove(player.getUUID())).exceptionally(throwable -> {
+                        Logger.getLogger(LoginHandler.class.getName()).log(Level.SEVERE,
+                                "Failed to save player data for " + player.getName(), throwable);
+                        return null;
+                    });
         }
     }
 

@@ -1,46 +1,62 @@
 package astaro.midmmo.core.data.cache;
 
+import astaro.midmmo.api.FinalPlayerData;
 import astaro.midmmo.core.attributes.stats.PlayerStatsManager;
 import astaro.midmmo.core.data.PlayerData;
 
-public class ImmutablePlayerData implements Cloneable {
-    private PlayerData original;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+public final class ImmutablePlayerData implements FinalPlayerData {
+    private final int level;
+    private final float exp;
+    private final String playerRace;
+    private final String playerClass;
+    private final Map<String, Double> stats;
 
 
     public ImmutablePlayerData(PlayerData original) {
         if (original == null) {
             throw new NullPointerException("PlayerData cannot be null");
         }
-        this.original = original;
+        this.level = original.getPlayerLvl();
+        this.exp = original.getPlayerExp();
+        this.playerRace = original.getPlayerRace();
+        this.playerClass = original.getPlayerClass();
+
+        // Защитная копия Map!
+        this.stats = Collections.unmodifiableMap(new HashMap<>(original.getPlayerChar().getStats()));
     }
 
     public PlayerData getOriginal() {
         throw new UnsupportedOperationException("Immutable data cannot by modified");
     }
 
+    @Override
     public int getLevel() {
-        return original.getPlayerLvl();
-    }
-
-    public float getExp() {
-        return original.getPlayerExp();
-    }
-
-    public PlayerStatsManager getPlayerChar() {
-        return original.getPlayerChar();
-    }
-
-    public String getPlayerRace() {
-        return original.getPlayerRace();
-    }
-
-    public String getPlayerClass() {
-        return original.getPlayerClass();
+        return level;
     }
 
     @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return this.original = (PlayerData) super.clone();
+    public float getExp() {
+        return exp;
     }
+
+    @Override
+    public String getPlayerRace() {
+        return playerRace;
+    }
+
+    @Override
+    public String getPlayerClass() {
+        return playerClass;
+    }
+
+    @Override
+    public Map<String, Double> getPlayerChar() {
+        return stats;
+    }
+
 
 }

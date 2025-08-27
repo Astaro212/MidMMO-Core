@@ -1,10 +1,13 @@
 package astaro.midmmo.core.attributes.stats;
 
 import astaro.midmmo.api.stats.StatsAPI;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+
 
 
 //Handle all stats
@@ -12,30 +15,35 @@ public class PlayerStatsManager implements StatsAPI {
 
     private static final int DEFAULT_POINTS_PER_LEVEL = 10;
 
+    private final Map<String, Double> main_stats = new ConcurrentHashMap<>();
     //Main stats affected by player
-    private static final Map<String, Double> main_stats = Map.of(
-            "str", 1.0D,
-            "dex", 1.0D,
-            "int", 1.0D,
-            "rec", 1.0D,
-            "luck", 1.0D,
-            "wis", 1.0D,
-            "spirit", 1.0D
-    );
 
     //Base Char Stats
-    private static final Map<String, Double> base_stats = new ConcurrentHashMap<>();
+    private final Map<String, Double> base_stats = new ConcurrentHashMap<>();
 
     // Only from Items/Buffs/Etc
-    private static final Map<String, Double> bonus_stats = new ConcurrentHashMap<>();
+    private final Map<String, Double> bonus_stats = new ConcurrentHashMap<>();
 
-    private transient int playerLvl;
+    //Stat modifiers
+    private final Map<String,Double> stat_modifiers = new ConcurrentHashMap<>();
+
+    private transient int playerLvl = 1;
 
 
     public PlayerStatsManager(){}
 
     public PlayerStatsManager(ServerPlayer player) {
+        main_stats.putAll(Map.of(
+                "str", 1.0D,
+                "dex", 1.0D,
+                "int", 1.0D,
+                "rec", 1.0D,
+                "luck", 1.0D,
+                "wis", 1.0D,
+                "spirit", 1.0D
+        ));
         initializeBaseStats();
+        BaseStats.calcStats(this);
     }
 
 
@@ -77,12 +85,22 @@ public class PlayerStatsManager implements StatsAPI {
         return (playerLvl * DEFAULT_POINTS_PER_LEVEL) - investedPoints;
     }
 
+
+
     public boolean increaseBaseStat(String stat, double amount){
         if(!main_stats.containsKey(stat) || getAvailableStatPoints()< amount) return false;
 
         base_stats.merge(stat, amount, Double::sum);
-        new BaseStats(this);
+        BaseStats.calcStats(this);
         return true;
+    }
+
+    public void addStatModifier(String stat, double value) {
+        stat_modifiers.put(stat, value);
+    }
+
+    public double getStatModifier(String stat) {
+        return stat_modifiers.getOrDefault(stat, 0.0D);
     }
 
     public void addBonus(String stat, double value){
@@ -102,7 +120,7 @@ public class PlayerStatsManager implements StatsAPI {
 
     @Override
     public double getStat(String stat) {
-        return base_stats.getOrDefault(stat, 1.0D) + bonus_stats.getOrDefault(stat, 0.0D);
+        return base_stats.getOrDefault(stat, 1.0D) + stat_modifiers.getOrDefault(stat, 0.0D) + bonus_stats.getOrDefault(stat, 0.0D);
     }
 
     @Override
@@ -118,7 +136,7 @@ public class PlayerStatsManager implements StatsAPI {
     public void addStat(String stat, double value) {
         if (main_stats.containsKey(stat)) {
             increaseBaseStat(stat, value);
-            new BaseStats(this);
+            BaseStats.calcStats(this);
         } else {
             addBonus(stat, value);
         }
@@ -137,6 +155,7 @@ public class PlayerStatsManager implements StatsAPI {
     public void setBaseStats(Map<String, Double> stats) {
         base_stats.clear();
         base_stats.putAll(stats);
+        BaseStats.calcStats(this);
     }
 
 }

@@ -14,7 +14,6 @@ public class PlayerData {
     static String query;
     //Changed Synchronized to ThreadLocal for improvement security with HikariCp
     private static final ThreadLocal<Boolean> lockConn = ThreadLocal.withInitial(() -> false);
-    private static dbConnector dbc = new dbConnector();
     private int level;
     private float exp;
     private PlayerStatsManager playerChar;
@@ -42,7 +41,7 @@ public class PlayerData {
             throw new IllegalStateException("Recursive transaction");
         }
         lockConn.set(true);
-        try (Connection conn = dbc.connect()) {
+        try (Connection conn = dbConnector.connect()) {
             //Using preparedStatement
             query = "SELECT * FROM stats WHERE name = ? AND user_id = ? ;";
             PreparedStatement stmt = conn.prepareStatement(query);
@@ -73,7 +72,7 @@ public class PlayerData {
             throw new IllegalStateException("Recursive transaction");
         }
         lockConn.set(true);
-        try (Connection conn = dbc.connect()) {
+        try (Connection conn = dbConnector.connect()) {
             query = "UPDATE stats SET playerLevel = ?, playerExp = ?, playerStats = ? WHERE name = ? AND user_id = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, level);
@@ -87,7 +86,7 @@ public class PlayerData {
             Logger.getLogger(PlayerData.class.getName()).log(Level.WARNING, "Failed to set UserData.");
             return false;
         } finally {
-            lockConn.set(true);
+            lockConn.set(false);
         }
 
 
@@ -99,7 +98,7 @@ public class PlayerData {
             throw new IllegalStateException("Recursive transaction");
         }
         lockConn.set(true);
-        try (Connection conn = dbc.connect()) {
+        try (Connection conn = dbConnector.connect()) {
             query = "INSERT INTO stats(user_id, name, playerRace, playerClass,playerExp, playerLevel, playerStats) VALUES(?,?,?,?,?,?,?)";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, uuid.toString());
@@ -123,17 +122,38 @@ public class PlayerData {
 
     //Needed for asynchronous data getting
     public static CompletableFuture<PlayerData> getDataAsync(String username, UUID uuid) {
-        return CompletableFuture.supplyAsync(() -> getData(username, uuid));
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return getData(username, uuid);
+            } catch(Exception e){
+                Logger.getLogger(PlayerData.class.getName()).log(Level.SEVERE, "Async data loading failed" + e);
+                return null;
+            }
+        });
     }
 
     //Async update
     public static CompletableFuture<Boolean> updateDataAsync(String username, UUID uuid, int level, float exp, PlayerStatsManager playerChar) {
-        return CompletableFuture.supplyAsync(() -> updateData(username, uuid, level, exp, playerChar));
+        return CompletableFuture.supplyAsync(() -> {
+            try{
+                return updateData(username, uuid, level, exp, playerChar);
+            } catch (Exception e){
+                Logger.getLogger(PlayerData.class.getName()).log(Level.SEVERE, "Async data updating failed" + e);
+                return null;
+            }
+        });
     }
 
     //Async inserting
     public static void insertDataAsync(String username, UUID uuid, int level, float exp, PlayerStatsManager playerChar, String playerRace, String playerClass) {
-        CompletableFuture.supplyAsync(() -> insertData(username, uuid, level, exp, playerChar, playerRace, playerClass));
+        CompletableFuture.supplyAsync(() -> {
+            try{
+                return insertData(username, uuid, level, exp, playerChar, playerRace, playerClass);
+            } catch (Exception e){
+                Logger.getLogger(PlayerData.class.getName()).log(Level.SEVERE, "Async data inserting failed" + e);
+                return null;
+            }
+        });
     }
 
 
@@ -178,4 +198,6 @@ public class PlayerData {
     public String getPlayerClass() {
         return playerClass;
     }
+
+
 }

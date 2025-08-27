@@ -4,6 +4,8 @@ import astaro.midmmo.core.attributes.Damage.CustomDamageSources;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 
+
+//Not needed now
 public class DamageEvent extends LivingEvent {
 
     private final LivingEntity attacker;
