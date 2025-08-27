@@ -17,14 +17,14 @@ public class ElementalSystem implements ElementalAPI {
 
     public enum ElementType {
         NONE(" ", " ", ChatFormatting.WHITE),
-        FIRE("fire_damage", "Огонь", ChatFormatting.RED),
-        EARTH("earth_damage", "Земля", ChatFormatting.DARK_GREEN),
-        AIR("air_damage", "Воздух", ChatFormatting.GRAY),
-        LIGHTNING("lightning_damage", "Молния", ChatFormatting.YELLOW),
-        LIGHT("light_damage", "Свет", ChatFormatting.GOLD),
-        BLOOD("blood_damage", "Кровь", ChatFormatting.DARK_RED),
-        ICE("ice_damage", "Лёд", ChatFormatting.AQUA),
-        VOID("void_damage", "Бездна", ChatFormatting.DARK_PURPLE);
+        FIRE("fire_damage", "Fire", ChatFormatting.RED),
+        EARTH("earth_damage", "Earth", ChatFormatting.DARK_GREEN),
+        AIR("air_damage", "Air", ChatFormatting.GRAY),
+        LIGHTNING("lightning_damage", "Thunder", ChatFormatting.YELLOW),
+        LIGHT("light_damage", "Light", ChatFormatting.GOLD),
+        BLOOD("blood_damage", "Blood", ChatFormatting.DARK_RED),
+        ICE("ice_damage", "Ice", ChatFormatting.AQUA),
+        VOID("void_damage", "Void", ChatFormatting.DARK_PURPLE);
 
 
         private final String damageStat;
@@ -55,7 +55,7 @@ public class ElementalSystem implements ElementalAPI {
 
         @Override
         public Component getDisplayName() {
-            return Component.literal(elementType.displayName).withStyle(elementType.color);
+            return Component.translatable("element.midmmo." + elementType.displayName).withStyle(elementType.color);
         }
 
         @Override

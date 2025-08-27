@@ -1,0 +1,63 @@
+{
+  "element.midmmo.none": " ",
+  "element.midmmo.fire": "Огонь",
+  "element.midmmo.earth": "Земля",
+  "element.midmmo.air": "Воздух",
+  "element.midmmo.lightning": "Гром",
+  "element.midmmo.light": "Свет",
+  "element.midmmo.blood": "Кровь",
+  "element.midmmo.ice": "Лёд",
+  "element.midmmo.void": "Бездна",
+
+
+  "player.midmmo": "Игрок",
+  "midmmo.user_is_not_exists": "Пользователь не найден. Зарегистрируйтесь!",
+  "midmmo.user_loaded": "Профиль загружен. Приветствую в Мире, %s. ",
+  "midmmo.networking.failed": "Соединение нарушено. Сообщите в поддержку, \nесли считаете что это ошибка",
+
+
+  "midmmo.player_notfound": "Игрок %s не найден",
+  "midmmo.exp_gained": "Получено %s опыта",
+  "midmmo.exp_gained_for" : "Получено %s опыта от %d",
+
+  "midmmo.race_select": "Выбери расу.",
+  "midmmo.class_select" : "Выбери класс.",
+  "midmmo.noraceclass": "Вы должны выбрать расу и класс.",
+  "midmmo.classrace_picked": "Ваша раса %s и класс %d. Удачи.",
+  "midmmo.create_btn": "Поехали!",
+
+  "midmmo.race.Orc": "Орк",
+  "midmmo.race.Elf": "Эльф",
+  "midmmo.race.Dwarf": "Гном",
+  "midmmo.race.Undead": "Нежить",
+  "midmmo.race.Human": "Человек",
+  "midmmo.race.DarkElf": "Темный эльф",
+
+
+  "midmmo.race_description.Orc": "Сильный зеленый боец!",
+  "midmmo.race_description.Elf": "Древоеб!",
+  "midmmo.race_description.Dwarf": "Хранитель гор",
+  "midmmo.race_description.Undead": "Мертвые идут!",
+  "midmmo.race_description.Human": "Тупо человек!",
+  "midmmo.race_description.DarkElf": "Нигга из пещеры!",
+
+
+  "midmmo.class.Warrior": "Воин",
+  "midmmo.class.Mage": "Маг",
+  "midmmo.class.Archer": "Лучник",
+
+  "midmmo.class_desc.Warrior": "Сломает ебыч за 2 приема",
+  "midmmo.class_desc.Mage": "Наколдует тебе пенис на лбу!",
+  "midmmo.class_desc.Archer": "Выстрелит белке в глаз. Без лука...",
+
+
+  "midmmo.stats.menu": "Окно персонажа",
+
+
+  "key.midmmo.statsmenu": "Открыть окно персонажа",
+  "key.categories.interface": "Интерфейс MidMMO",
+  "narration.selection.list": "Характеристики",
+  "stat.entry": "%s : %d"
+
+
+}

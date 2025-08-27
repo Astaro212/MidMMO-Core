@@ -1,5 +1,62 @@
 {
-  "itemGroup.midmmo": "Example Mod Tab",
-  "block.midmmo.example_block": "Example Block",
-  "item.midmmo.example_item": "Example Item"
+  "element.midmmo.none": " ",
+  "element.midmmo.fire": "Fire",
+  "element.midmmo.earth": "Earth",
+  "element.midmmo.air": "Air",
+  "element.midmmo.lightning": "Lightning",
+  "element.midmmo.light": "Light",
+  "element.midmmo.blood": "Blood",
+  "element.midmmo.ice": "Ice",
+  "element.midmmo.void": "Void",
+
+
+  "player.midmmo": "Player",
+  "midmmo.user_is_not_exists": "User does not exists. Register first, please.",
+  "midmmo.user_loaded": "Profile loaded. Welcome in Theo, %s. ",
+  "midmmo.networking.failed": "Networking failed. Contact to administrators",
+
+  "midmmo.player_notfound": "Player %s not found",
+  "midmmo.exp_gained": "Gained %s experience",
+  "midmmo.exp_gained_for": "Gained %s experience from %d",
+
+
+  "midmmo.race_select": "Pick your race.",
+  "midmmo.class_select": "Pick your class.",
+  "midmmo.noraceclass": "U must pick ur race and class.",
+  "midmmo.classrace_picked": "You race is %s and class is %d. Good Luck.",
+  "midmmo.create_btn": "Let's GO!",
+
+
+  "midmmo.race.Orc": "Orc",
+  "midmmo.race.Elf": "Elf",
+  "midmmo.race.Dwarf": "Dwarf",
+  "midmmo.race.Undead": "Undead",
+  "midmmo.race.Human": "Human",
+  "midmmo.race.DarkElf": "Dark Elf",
+
+
+  "midmmo.race_description.Orc": "Powerful green fighter!",
+  "midmmo.race_description.Elf": "Great elf with nature!",
+  "midmmo.race_description.Dwarf": "Mountain keeper",
+  "midmmo.race_description.Undead": "Dead is coming!",
+  "midmmo.race_description.Human": "Just human!",
+  "midmmo.race_description.DarkElf": "Dark Elves from Darkest Caves!",
+
+
+  "midmmo.class.Warrior": "Warrior",
+  "midmmo.class.Mage": "Mage",
+  "midmmo.class.Archer": "Archer",
+
+  "midmmo.class_desc.Warrior": "Powerful melee fighter",
+  "midmmo.class_desc.Mage": "Wiiizard!",
+  "midmmo.class_desc.Archer": "Eye shooter",
+
+
+  "midmmo.stats.menu": "Profile window",
+
+
+  "key.midmmo.statsmenu": "Open profile menu",
+  "key.categories.interface": "MidMMO Interface",
+  "narration.selection.list": "Stats",
+  "stat.entry": "%s : %d"
 }

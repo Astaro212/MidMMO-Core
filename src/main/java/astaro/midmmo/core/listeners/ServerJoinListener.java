@@ -10,6 +10,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import static astaro.midmmo.Midmmo.MODID;
 
+
 //Server action (join or leave) event listener
 @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.DEDICATED_SERVER)
 public class ServerJoinListener {
@@ -29,4 +30,6 @@ public class ServerJoinListener {
             LoginHandler.onPlayerExit(serverPlayer);
         }
     }
+
+
 }

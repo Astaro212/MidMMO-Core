@@ -3,7 +3,6 @@ package astaro.midmmo.core.attributes.Damage;
 import astaro.midmmo.core.attributes.providers.AttributeProvider;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.util.concurrent.ThreadLocalRandom;
 
 public class ResistanceSystem {
 
@@ -13,7 +12,10 @@ public class ResistanceSystem {
         Double resistance = getResistance(target, type);
         Double penetration = getPenetration(target, type);
         float effectiveResist = (float) Math.max(0, resistance - penetration);
-        return incomingDamage * (1 - effectiveResist / 1000f);
+        if(effectiveResist != 0) {
+            return incomingDamage * (1 - effectiveResist / 1000f);
+        }
+        return incomingDamage;
     }
 
     private static Double getResistance(LivingEntity target, CustomDamageSources type) {

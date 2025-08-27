@@ -60,7 +60,9 @@ public class PlayerStatsManager implements StatsAPI {
                 "health", 200.0D,
                 "mana", 100.0D,
                 "magic_resist", 50.0D,
-                "armor", 50.0D
+                "armor", 50.0D,
+                "physical_damage", 1.0D,
+                "magic_damage", 1.0D
         ));
     }
 
@@ -99,7 +101,7 @@ public class PlayerStatsManager implements StatsAPI {
     }
 
     @Override
-    public Double getStat(String stat) {
+    public double getStat(String stat) {
         return base_stats.getOrDefault(stat, 1.0D) + bonus_stats.getOrDefault(stat, 0.0D);
     }
 
@@ -136,4 +138,5 @@ public class PlayerStatsManager implements StatsAPI {
         base_stats.clear();
         base_stats.putAll(stats);
     }
+
 }

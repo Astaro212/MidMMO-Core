@@ -18,7 +18,7 @@ public class MobStatsAdapter implements StatsAPI {
     }
 
     @Override
-    public Double getStat(String stat) {
+    public double getStat(String stat) {
         // Базовое значение
         double base = statsTag.getCompound("base").getDouble(stat);
 

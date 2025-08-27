@@ -38,7 +38,7 @@ public class LevelAndExp {
         var server = source.getServer();
         var player = server.getPlayerList().getPlayerByName(playerName);
         if (player == null) {
-            source.sendFailure(Component.literal("Игрок " + playerName + " не найден."));
+            source.sendFailure(Component.translatable("midmmo.player_notfound" ,playerName));
             return 0;
         }
 
@@ -48,7 +48,7 @@ public class LevelAndExp {
         playerExp.addExperience(exp);
         playerExp.checkAndUpdateLevel();
 
-        source.sendSuccess(() -> Component.literal("Получено " + exp + " опыта."), true);
+        source.sendSuccess(() -> Component.translatable("midmmo.exp_gained", exp ), true);
         return 1;
 
     }

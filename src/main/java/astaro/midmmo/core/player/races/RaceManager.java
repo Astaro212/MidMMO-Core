@@ -20,7 +20,7 @@ public class RaceManager {
                 ResourceLocation.fromNamespaceAndPath("midmmo", "skins/undead.png")));
         RACE_MAP.put("Human", new RaceInfo("Human", "Just human!",
                 ResourceLocation.fromNamespaceAndPath("midmmo", "skins/human.png")));
-        RACE_MAP.put("darkelf", new RaceInfo("Dark Elf","Dark Elves from Darkest Caves!",
+        RACE_MAP.put("DarkElf", new RaceInfo("DarkElf","Dark Elves from Darkest Caves!",
                 ResourceLocation.fromNamespaceAndPath("midmmo", "skins/darkelf.png")));
     }
 

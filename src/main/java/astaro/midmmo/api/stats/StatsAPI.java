@@ -8,7 +8,7 @@ public interface StatsAPI {
     Map<String, Double> getStats();
 
     // Получить конкретный стат
-    Double getStat(String stat);
+    double getStat(String stat);
 
     // Изменить конкретный стат
     void setStat(String stat, double value);

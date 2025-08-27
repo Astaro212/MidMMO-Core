@@ -1,7 +1,7 @@
 package astaro.midmmo.core.GUI.classSelection;
 
 import astaro.midmmo.Midmmo;
-import astaro.midmmo.core.networking.RaceMenuPacket;
+import astaro.midmmo.core.networking.Packets.RaceMenuPacket;
 import astaro.midmmo.core.player.classes.ClassInfo;
 import astaro.midmmo.core.player.classes.ClassManager;
 import astaro.midmmo.core.player.races.RaceInfo;
@@ -20,7 +20,6 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 
 public class ClassSelectionScreen extends Screen  /*extends AbstractContainerScreen<RaceSelectionMenu>*/ {
@@ -66,20 +65,20 @@ public class ClassSelectionScreen extends Screen  /*extends AbstractContainerScr
         int yOffset = (int) (clientHeight * PANELS_Y);
         int gap = 5;
 
-        addRenderableWidget(new Button.Builder(Component.literal("Select race"), btn -> {
+        addRenderableWidget(new Button.Builder(Component.translatable("midmmo.race_select"), btn -> {
             showSelectionPanel(SelectionState.RACE_SELECTION);
         }).bounds(xOffset, yOffset, BUTTON_WIDTH, BUTTON_HEIGHT).build());
 
 
         yOffset += BUTTON_HEIGHT + gap;
 
-        addRenderableWidget(new Button.Builder(Component.literal("Select class"), btn -> {
+        addRenderableWidget(new Button.Builder(Component.translatable("midmmo.class_select"), btn -> {
             showSelectionPanel(SelectionState.CLASS_SELECTION);
         }).bounds(xOffset, yOffset, BUTTON_WIDTH, BUTTON_HEIGHT).build());
 
         yOffset += BUTTON_HEIGHT + gap;
 
-        addRenderableWidget(new Button.Builder(Component.literal("Create character"), btn -> {
+        addRenderableWidget(new Button.Builder(Component.translatable("midmmo.create_btn"), btn -> {
             onClose();
         }).bounds(xOffset, yOffset, BUTTON_WIDTH, BUTTON_HEIGHT).build());
     }
@@ -117,10 +116,10 @@ public class ClassSelectionScreen extends Screen  /*extends AbstractContainerScr
     private void showRaceSelection(int xOffset, int yOffset, int gap) {;
         for (RaceInfo race : RaceManager.RACE_MAP.values()) {
 
-            Button raceBtn = new Button.Builder(Component.literal(race.raceName), btn1 -> {
+            Button raceBtn = new Button.Builder(Component.translatable("midmmo.race." + race.raceName), btn1 -> {
                 this.race = race.raceName;
                 updateSkin(race);
-                textWidget.setMessage(Component.literal(race.raceDescription));
+                textWidget.setMessage(Component.translatable("midmmo.race_description." + race.raceName));
 
             }).bounds(xOffset, yOffset, BUTTON_WIDTH, BUTTON_HEIGHT).build();
 
@@ -133,10 +132,10 @@ public class ClassSelectionScreen extends Screen  /*extends AbstractContainerScr
 
     private void showClassSelection(int xOffset, int yOffset, int gap) {
         for (ClassInfo classInfo : ClassManager.CLASS_INFO.values()) {
-            Button classBtn = new Button.Builder(Component.literal(classInfo.className),
+            Button classBtn = new Button.Builder(Component.translatable("midmmo.class." + classInfo.className),
                     btn1 -> {
                         this.className = classInfo.className;
-                        textWidget.setMessage(Component.literal(classInfo.classDescriprtion));
+                        textWidget.setMessage(Component.translatable("midmmo.class_desc."+classInfo.className));
                     }).bounds(xOffset, yOffset, BUTTON_WIDTH, BUTTON_HEIGHT).build();
             addRenderableWidget(classBtn);
             rightWidgets.add(classBtn);
@@ -194,12 +193,12 @@ public class ClassSelectionScreen extends Screen  /*extends AbstractContainerScr
                 clientWidth, clientHeight,
                 clientWidth, clientHeight);
 
-        String title = cState == SelectionState.RACE_SELECTION ? "Select race" : "Select class";
+        String title = cState == SelectionState.RACE_SELECTION ? Component.translatable("midmmo.race_select").getString() : Component.translatable("midmmo.class_select").getString();
         guiGraphics.drawString(font, title, (int) (clientWidth * 0.20), (int) (clientHeight * 0.05), 0xFFFFFF);
 
 
         if (showMessage) {
-            guiGraphics.drawString(this.font, "U must pick ur race and class.", (int) (clientWidth * 0.20), (int) (clientWidth * 0.75), 0xFFFFFF);
+            guiGraphics.drawString(this.font, Component.translatable("midmmo.noraceclass"), (int) (clientWidth * 0.20), (int) (clientWidth * 0.75), 0xFFFFFF);
         }
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
@@ -209,9 +208,9 @@ public class ClassSelectionScreen extends Screen  /*extends AbstractContainerScr
         // Stop any handlers or check smth here
         if (race != null && className != null) {
             PacketDistributor.sendToServer(new RaceMenuPacket(0, race, className));
-            this.minecraft.player.displayClientMessage(Component.literal(
-                    "You have picked race: " + race + " and class: " + className
-            ), false);
+            this.minecraft.player.displayClientMessage(Component.translatable(
+                    "midmmo.classrace_picked", race, className)
+            , false);
             super.onClose();
         } else {
             showMessage = true;

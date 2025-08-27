@@ -19,7 +19,7 @@ import static astaro.midmmo.Midmmo.MODID;
 @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.GAME)
 public class ExpListeners {
 
-    private static final Component EXP_MESSAGE = Component.translatable("Exp gained: ");
+
 
     //Mob kill
     @SubscribeEvent
@@ -40,8 +40,7 @@ public class ExpListeners {
 
         playerExp.addExperience(expGained);
         playerExp.checkAndUpdateLevel();
-        player.sendSystemMessage(EXP_MESSAGE.copy().append(String.format(" %.1f ", expGained))
-                .append(mobName));
+        player.sendSystemMessage(Component.translatable( "midmmo.exp_gained_for", expGained, mobName));
 
     }
 

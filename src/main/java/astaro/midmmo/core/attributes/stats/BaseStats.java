@@ -1,8 +1,55 @@
 package astaro.midmmo.core.attributes.stats;
 
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.*;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+@EventBusSubscriber
 public class BaseStats {
 
     private double value;
+    private static double currentDamage;
+
+    @SubscribeEvent
+    public static void checkHandAndStats(PlayerTickEvent.Pre event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        PlayerStatsManager stats = new PlayerStatsManager(player);
+        if(player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
+            currentDamage = 1.0D;
+        } else {
+            currentDamage = getBaseWeaponDamage(player.getItemInHand(InteractionHand.MAIN_HAND));
+        }
+
+        Logger.getLogger("DAMAGE").log(Level.INFO, "Weapon damage = " + currentDamage);
+        player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(stats.getStat("health"));
+        player.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(stats.getStat("physical_damage"));
+        player.getAttribute(Attributes.ARMOR).setBaseValue(stats.getStat("armor"));
+        player.getAttribute(Attributes.ATTACK_KNOCKBACK).setBaseValue(0.0D);
+
+        if (player.getHealth() != player.getMaxHealth()) {
+            player.setHealth(player.getMaxHealth());
+        }
+    }
+
+    private static float getBaseWeaponDamage(ItemStack itemStack) {
+
+        Item item = itemStack.getItem();
+        // Базовый урон для ванильных предметов
+        return switch (item) {
+            case SwordItem sword -> sword.getDamage(itemStack) + 1.0f; // +1 потому что базовый урон мечей на 1 меньше
+            case AxeItem axe -> axe.getDamage(itemStack) + 1.0f;
+            case TridentItem trident -> 9.0f; // Урон трезубца
+            default -> 1.0f;
+        };
+    }
 
     BaseStats(PlayerStatsManager stats) {
         calculatePhysPower(stats);
@@ -26,7 +73,7 @@ public class BaseStats {
     }
 
     private void calculatePhysPower(PlayerStatsManager stats) {
-        this.value = stats.getStat("str") * 0.08D;
+        this.value = (currentDamage + stats.getStat("str")) * 0.08D;
         stats.setStat("physical_damage", value);
     }
 
@@ -57,3 +104,4 @@ public class BaseStats {
     }
 
 }
+

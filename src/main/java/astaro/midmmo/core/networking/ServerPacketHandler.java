@@ -2,7 +2,11 @@ package astaro.midmmo.core.networking;
 
 import astaro.midmmo.core.attributes.stats.PlayerStatsManager;
 import astaro.midmmo.core.data.PlayerData;
-import astaro.midmmo.core.data.StatSerializer;
+import astaro.midmmo.core.data.cache.ImmutablePlayerData;
+import astaro.midmmo.core.data.cache.PlayerDataCache;
+import astaro.midmmo.core.data.cache.PlayerDataSync;
+import astaro.midmmo.core.networking.Packets.RaceMenuPacket;
+import astaro.midmmo.core.networking.Packets.StatRequestPacket;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
@@ -23,14 +27,26 @@ public class ServerPacketHandler {
             }
         }).exceptionally(e -> {
             // Handle exception
-            context.disconnect(Component.translatable("my_mod.networking.failed", e.getMessage()));
+            context.disconnect(Component.translatable("midmmo.networking.failed", e.getMessage()));
             return null;
         });
     }
 
-    public static void handlePlayerData(final PlayerDataPacket data, final IPayloadContext context){
-        context.enqueueWork(()->{
-
-        });
+    public static void handleStatRequest(final StatRequestPacket packet, final IPayloadContext context) {
+        if (context.player() instanceof ServerPlayer serverPlayer) {
+            context.enqueueWork(() -> {
+                // Получаем данные игрока из кеша
+                var playerData = PlayerDataCache.get(serverPlayer.getUUID());
+                if (playerData != null) {
+                    // Отправляем данные обратно клиенту
+                    var syncPacket = PlayerDataSync.fromImmutableData(
+                            serverPlayer.getUUID(),
+                            new ImmutablePlayerData(playerData)
+                    );
+                    context.reply(syncPacket);
+                }
+            });
+        }
     }
 }
+

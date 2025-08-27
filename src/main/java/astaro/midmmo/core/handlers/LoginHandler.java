@@ -4,13 +4,15 @@ import astaro.midmmo.core.attributes.stats.PlayerStatsManager;
 import astaro.midmmo.core.data.PlayerData;
 import astaro.midmmo.core.data.cache.PlayerDataCache;
 import astaro.midmmo.core.expsystem.PlayerExp;
-import astaro.midmmo.core.networking.RaceMenuPacket;
+import astaro.midmmo.core.networking.Packets.RaceMenuPacket;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.UUID;
 
 
@@ -40,7 +42,7 @@ public class LoginHandler {
         } else {
             //If no user profile on db -> disconnects player
             if (player instanceof ServerPlayer serverPlayer) {
-                serverPlayer.connection.disconnect(Component.literal("&bТакого игрока не существует. Зарегистрируйтесь!"));
+                serverPlayer.connection.disconnect(Component.translatable("midmmo.user_is_not_exists"));
             }
         }
     }
@@ -49,11 +51,10 @@ public class LoginHandler {
     private static void applyPlayerData(ServerPlayer player, @NotNull PlayerData data) {
         PlayerExp playerExp = new PlayerExp(player.getUUID(), player.getName().
                 getString(), data.getPlayerLvl(), data.getPlayerExp());
-        PlayerStatsManager manager = new PlayerStatsManager();
+        PlayerStatsManager manager = data.getPlayerChar();
         manager.setPlayerLevel(playerExp.getPlayerLevel());
-
         PlayerDataCache.put(player.getUUID(), data);
-
+        player.sendSystemMessage(Component.translatable("midmmo.user_loaded", player.getName()).withStyle(ChatFormatting.GREEN));
     }
 
     //Actions on player exit

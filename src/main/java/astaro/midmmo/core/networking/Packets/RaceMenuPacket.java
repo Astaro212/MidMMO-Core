@@ -1,4 +1,4 @@
-package astaro.midmmo.core.networking;
+package astaro.midmmo.core.networking.Packets;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

@@ -43,7 +43,7 @@ public class AttributeProvider implements StatsAPI {
     }
 
     @Override
-    public Double getStat(String stat) {
+    public double getStat(String stat) {
         // First check player stats if available
         if (playerStats != null) {
             return playerStats.getStat(stat);

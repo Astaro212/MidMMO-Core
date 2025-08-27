@@ -4,6 +4,7 @@ import astaro.midmmo.core.attributes.Damage.CustomDamageSources;
 import astaro.midmmo.core.attributes.Damage.DamageSystem;
 import astaro.midmmo.core.attributes.Damage.ElementalSystem;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.EventPriority;
@@ -55,5 +56,6 @@ public class DamageListener {
         NeoForge.EVENT_BUS.post(damageEvent);
 
         target.hurt(physicalDamage,damageEvent.getContainer().getNewDamage());
+        attacker.swing(attacker.getUsedItemHand(), true);
     }
 }
