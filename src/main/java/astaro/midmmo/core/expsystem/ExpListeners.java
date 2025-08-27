@@ -9,6 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 
 import java.util.UUID;
 
@@ -53,6 +54,11 @@ public class ExpListeners {
         } else {
             return new PlayerExp(uuid, playerName, 1, 0f);
         }
+    }
+
+    @SubscribeEvent
+    public static void cancelExpDrop(LivingExperienceDropEvent event){
+        event.setCanceled(true);
     }
 
 }

@@ -34,8 +34,8 @@ public class PlayerStatsMenu extends Screen {
 
     public static final int WINDOW_WIDTH = 252;
     public static final int WINDOW_HEIGHT = 256;
-    public static final float WINDOW_LOCATION_X = 0.2F;
-    public static final float WINDOW_LOCATION_Y = 0.03F;
+    public static final float WINDOW_LOCATION_X = 0.25F;
+    public static final float WINDOW_LOCATION_Y = 0.12F;
 
     int leftPos;
     int topPos;
@@ -65,7 +65,6 @@ public class PlayerStatsMenu extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         guiGraphics.blit(RenderType.GUI_TEXTURED, WINDOW_LOCATION,
                 (int) (clientWidth * WINDOW_LOCATION_X), (int) (clientHeight * WINDOW_LOCATION_Y),
                 0, 0,

@@ -36,7 +36,10 @@ public class PlayerHUD implements LayeredDraw.Layer {
 
     @Override
     public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-        if ((Minecraft.getInstance()).options.hideGui || (Minecraft.getInstance().player.isSpectator())) return;
+        if ((Minecraft.getInstance()).options.hideGui ||
+                (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isSpectator())) return;
+
+
 
         int screenWidth = guiGraphics.guiWidth();
         int screenHeight = guiGraphics.guiHeight();
