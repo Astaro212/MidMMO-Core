@@ -48,20 +48,20 @@ public class ElementalSystem implements ElementalAPI {
     public static final ElementalSystem ICE = new ElementalSystem(ElementType.ICE);
     public static final ElementalSystem VOID = new ElementalSystem(ElementType.VOID);
 
-        @Override
-        public String getElementType() {
-            return elementType.damageStat;
-        }
+    @Override
+    public String getElementType() {
+        return elementType.damageStat;
+    }
 
-        @Override
-        public Component getDisplayName() {
-            return Component.translatable("element.midmmo." + elementType.displayName).withStyle(elementType.color);
-        }
+    @Override
+    public Component getDisplayName() {
+        return Component.translatable("element.midmmo." + elementType.displayName).withStyle(elementType.color);
+    }
 
-        @Override
-        public ChatFormatting getColor() {
-            return elementType.color;
-        }
+    @Override
+    public ChatFormatting getColor() {
+        return elementType.color;
+    }
 
     @NotNull
     public static ElementalSystem fromElementType(@Nullable ElementType elementType) {
@@ -105,7 +105,7 @@ public class ElementalSystem implements ElementalAPI {
     }
 
     public static ElementalSystem[] getAttackElements() {
-        return new ElementalSystem[] {FIRE, EARTH, AIR, LIGHTNING, LIGHT, BLOOD, ICE, VOID};
+        return new ElementalSystem[]{FIRE, EARTH, AIR, LIGHTNING, LIGHT, BLOOD, ICE, VOID};
     }
 
     public boolean isPresent() {

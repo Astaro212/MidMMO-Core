@@ -98,7 +98,7 @@ configurations {
     configureEach {
         exclude group: 'com.google.errorprone', module: 'error_prone_annotations'
         resolutionStrategy {
-            force 'org.slf4j:slf4j-api:2.0.9'
+            force 'org.slf4j:slf4j-api:2.0.16'
             force 'com.google.errorprone:error_prone_annotations:2.23.0'
         }
     }
@@ -110,7 +110,7 @@ dependencies {
     shade 'com.zaxxer:HikariCP:6.3.0'
     shade 'com.github.ben-manes.caffeine:caffeine:3.2.2'
     compileOnly 'com.google.errorprone:error_prone_annotations:2.23.0'
-    compileOnly 'org.slf4j:slf4j-api:2.0.9'
+    compileOnly 'org.slf4j:slf4j-api:2.0.16'
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

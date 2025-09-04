@@ -46,9 +46,9 @@
   "midmmo.class.Mage": "Маг",
   "midmmo.class.Archer": "Лучник",
 
-  "midmmo.class_desc.Warrior": "Сломает ебыч за 2 приема",
-  "midmmo.class_desc.Mage": "Наколдует тебе пенис на лбу!",
-  "midmmo.class_desc.Archer": "Выстрелит белке в глаз. Без лука...",
+  "midmmo.class_desc.Warrior": "Сломает ебыч \n за 2 приема",
+  "midmmo.class_desc.Mage": "Наколдует тебе пениc... \n на лбу!",
+  "midmmo.class_desc.Archer": "Выстрелит белке в глаз. \n Без лука...",
 
 
   "midmmo.stats.menu": "Окно персонажа",
@@ -57,7 +57,14 @@
   "key.midmmo.statsmenu": "Открыть окно персонажа",
   "key.categories.interface": "Интерфейс MidMMO",
   "narration.selection.list": "Характеристики",
-  "stat.entry": "%s : %d"
+  "stat.entry": "%s : %d",
 
+
+  "economy.currency.dollars": "Доллары",
+  "economy.currency.coins": "Монеты",
+  "economy.currency.diamonds": "Алмазы",
+  "economy.balance.format": "%s: %s",
+  "economy.transfer.success": "Переведено %.2f %s игроку %s",
+  "economy.transfer.failed": "Недостаточно средств!"
 
 }

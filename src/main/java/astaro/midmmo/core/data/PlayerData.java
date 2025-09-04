@@ -4,156 +4,39 @@ import astaro.midmmo.core.attributes.stats.PlayerStatsManager;
 import astaro.midmmo.core.data.connectors.dbConnector;
 
 import java.sql.*;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PlayerData {
 
-    static String query;
-    //Changed Synchronized to ThreadLocal for improvement security with HikariCp
-    private static final ThreadLocal<Boolean> lockConn = ThreadLocal.withInitial(() -> false);
+
     private int level;
     private float exp;
     private PlayerStatsManager playerChar;
     private String playerClass;
     private String playerRace;
 
+    private Map<String, Double> economyData = new ConcurrentHashMap<>();
+    private boolean isDirty = false;
+
     //Empty constructor (mb I'll need him)
     public PlayerData() {
+
     }
 
     //Main constructor
-    public PlayerData(int level, float exp, PlayerStatsManager playerChar, String race, String className) {
+    public PlayerData(int level, float exp, PlayerStatsManager playerChar, String race, String className, Map<String,Double> economyData) {
         this.level = level;
         this.exp = exp;
         this.playerChar = playerChar;
         this.playerRace = race;
         this.playerClass = className;
-    }
-
-    //Get playerData from database
-    public static PlayerData getData(String username, UUID uuid) {
-
-        //Changed Synchronized to ThreadLocal for improvement security with HikariCp
-        if (lockConn.get()) {
-            throw new IllegalStateException("Recursive transaction");
-        }
-        lockConn.set(true);
-        try (Connection conn = dbConnector.connect()) {
-            //Using preparedStatement
-            query = "SELECT * FROM stats WHERE name = ? AND user_id = ? ;";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1, username);
-            stmt.setString(2, uuid.toString());
-            ResultSet rst = stmt.executeQuery();
-            //Getting data
-            if (rst.next()) {
-                int level = rst.getInt("playerLevel");
-                float exp = rst.getFloat("playerExp");
-                PlayerStatsManager stats = StatSerializer.deserizalize(rst.getString("playerStats"));
-                String race = rst.getString("playerRace");
-                String className = rst.getString("playerClass");
-                return new PlayerData(level, exp, stats, race, className);
-            }
-        } catch (SQLException e) {
-            Logger.getLogger(PlayerData.class.getName()).log(Level.WARNING, "Failed to get user info.");
-        } finally {
-            lockConn.set(false);
-        }
-        return null;
-
-    }
-
-    //Updating playerData profile
-    public static boolean updateData(String username, UUID uuid, int level, float exp, PlayerStatsManager playerChar) {
-        if (lockConn.get()) {
-            throw new IllegalStateException("Recursive transaction");
-        }
-        lockConn.set(true);
-        try (Connection conn = dbConnector.connect()) {
-            query = "UPDATE stats SET playerLevel = ?, playerExp = ?, playerStats = ? WHERE name = ? AND user_id = ?";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setInt(1, level);
-            stmt.setFloat(2, exp);
-            stmt.setString(3, StatSerializer.serialize(playerChar));
-            stmt.setString(4, username);
-            stmt.setString(5, uuid.toString());
-            int result = stmt.executeUpdate();
-            return result != 0;
-        } catch (SQLException e) {
-            Logger.getLogger(PlayerData.class.getName()).log(Level.WARNING, "Failed to set UserData.");
-            return false;
-        } finally {
-            lockConn.set(false);
-        }
-
-
-    }
-
-    //Creating new playerData
-    public static boolean insertData(String username, UUID uuid, int level, float exp, PlayerStatsManager playerChar, String playerRace, String playerClass) {
-        if (lockConn.get()) {
-            throw new IllegalStateException("Recursive transaction");
-        }
-        lockConn.set(true);
-        try (Connection conn = dbConnector.connect()) {
-            query = "INSERT INTO stats(user_id, name, playerRace, playerClass,playerExp, playerLevel, playerStats) VALUES(?,?,?,?,?,?,?)";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1, uuid.toString());
-            stmt.setString(2, username);
-            stmt.setString(3, playerRace);
-            stmt.setString(4, playerClass);
-            stmt.setFloat(5, exp);
-            stmt.setInt(6, level);
-            stmt.setString(7, StatSerializer.serialize(playerChar));
-            int result = stmt.executeUpdate();
-            return result != 0;
-        } catch (SQLException e) {
-            Logger.getLogger(PlayerData.class.getName()).log(Level.WARNING, "Failed to set UserData.");
-            return false;
-        } finally {
-            lockConn.set(false);
-        }
-
-
-    }
-
-    //Needed for asynchronous data getting
-    public static CompletableFuture<PlayerData> getDataAsync(String username, UUID uuid) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return getData(username, uuid);
-            } catch(Exception e){
-                Logger.getLogger(PlayerData.class.getName()).log(Level.SEVERE, "Async data loading failed" + e);
-                return null;
-            }
-        });
-    }
-
-    //Async update
-    public static CompletableFuture<Boolean> updateDataAsync(String username, UUID uuid, int level, float exp, PlayerStatsManager playerChar) {
-        return CompletableFuture.supplyAsync(() -> {
-            try{
-                return updateData(username, uuid, level, exp, playerChar);
-            } catch (Exception e){
-                Logger.getLogger(PlayerData.class.getName()).log(Level.SEVERE, "Async data updating failed" + e);
-                return null;
-            }
-        });
-    }
-
-    //Async inserting
-    public static void insertDataAsync(String username, UUID uuid, int level, float exp, PlayerStatsManager playerChar, String playerRace, String playerClass) {
-        CompletableFuture.supplyAsync(() -> {
-            try{
-                return insertData(username, uuid, level, exp, playerChar, playerRace, playerClass);
-            } catch (Exception e){
-                Logger.getLogger(PlayerData.class.getName()).log(Level.SEVERE, "Async data inserting failed" + e);
-                return null;
-            }
-        });
+        this.economyData = economyData != null ? new ConcurrentHashMap<>(economyData) : new ConcurrentHashMap<>();
+        initializeEconomy();
     }
 
 
@@ -197,6 +80,56 @@ public class PlayerData {
 
     public String getPlayerClass() {
         return playerClass;
+    }
+    private void initializeEconomy(){
+        economyData.putIfAbsent("dollars", 100.0D);
+        economyData.putIfAbsent("coins", 0.0D);
+        economyData.putIfAbsent("diamonds", 0.0D);
+    }
+
+    public double getCurrency(String currencyType){
+        return economyData.getOrDefault(currencyType, 0.0);
+    }
+
+    public void setCurrency(String currencyType, double amount) {
+        economyData.put(currencyType, Math.max(0, amount));
+        isDirty = true;
+    }
+
+    public void addCurrency(String currencyType, double amount) {
+        double current = getCurrency(currencyType);
+        setCurrency(currencyType, current + amount);
+    }
+
+    public boolean subtractCurrency(String currencyType, double amount) {
+        double current = getCurrency(currencyType);
+        if (current >= amount) {
+            setCurrency(currencyType, current - amount);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean hasEnough(String currencyType, double amount) {
+        return getCurrency(currencyType) >= amount;
+    }
+
+    public Map<String, Double> getEconomyData() {
+        return new ConcurrentHashMap<>(economyData);
+    }
+
+    public void setEconomyData(Map<String, Double> economyData) {
+        this.economyData.clear();
+        this.economyData.putAll(economyData);
+        isDirty = true;
+    }
+
+    public boolean isEconomyDirty() {
+        return isDirty;
+    }
+
+    public void markEconomyClean() {
+        isDirty = false;
     }
 
 

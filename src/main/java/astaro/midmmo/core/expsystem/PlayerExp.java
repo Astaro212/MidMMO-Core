@@ -2,6 +2,7 @@ package astaro.midmmo.core.expsystem;
 
 import astaro.midmmo.api.exp.ExpAPI;
 import astaro.midmmo.core.data.PlayerData;
+import astaro.midmmo.core.data.SQL.SQLWorker;
 import astaro.midmmo.core.data.cache.PlayerDataCache;
 
 import java.util.UUID;
@@ -33,7 +34,6 @@ public class PlayerExp implements ExpAPI {
         this.playerName = playerName;
         this.level = level;
         this.exp = exp;
-
     }
 
     //Method to show current user exp
@@ -68,7 +68,7 @@ public class PlayerExp implements ExpAPI {
     @Override
     public void setPlayerLevel(int level) {
         this.level = level;
-        updateExp();
+        updateCachedExp();
     }
 
     //Check and update user level
@@ -100,7 +100,7 @@ public class PlayerExp implements ExpAPI {
 
         }
 
-        updateExp();
+        updateCachedExp();
     }
 
     //Get max exp
@@ -114,7 +114,7 @@ public class PlayerExp implements ExpAPI {
     }
 
     //Update player cache and data in DB
-    private void updateExp() {
+    private void updateCachedExp() {
         PlayerData data = PlayerDataCache.get(uuid);
 
         if (data != null) {
@@ -123,20 +123,6 @@ public class PlayerExp implements ExpAPI {
             data.setPlayerLevel(level);
 
             PlayerDataCache.put(uuid, data);
-
-            PlayerData.updateDataAsync(playerName,
-                    uuid,
-                    level,
-                    exp,
-                    data.getPlayerChar()).thenAccept(success -> {
-                if (success) {
-                    Logger.getLogger(PlayerExp.class.getName()).log(Level.INFO, "Данные успешно сохранены!.");
-                } else {
-                    Logger.getLogger(PlayerExp.class.getName()).log(Level.WARNING, "Данные пользователя " +
-                            playerName + "не были сохранены. Значения опыта: " +
-                            exp + " уровень: " + level);
-                }
-            });
         }
     }
 

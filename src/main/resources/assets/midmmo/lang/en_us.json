@@ -40,7 +40,7 @@
   "midmmo.race_description.Dwarf": "Mountain keeper",
   "midmmo.race_description.Undead": "Dead is coming!",
   "midmmo.race_description.Human": "Just human!",
-  "midmmo.race_description.DarkElf": "Dark Elves from Darkest Caves!",
+  "midmmo.race_description.DarkElf": "Dark Elves from \nDarkest Caves!",
 
 
   "midmmo.class.Warrior": "Warrior",
@@ -58,5 +58,12 @@
   "key.midmmo.statsmenu": "Open profile menu",
   "key.categories.interface": "MidMMO Interface",
   "narration.selection.list": "Stats",
-  "stat.entry": "%s : %d"
+  "stat.entry": "%s : %d",
+
+  "economy.currency.dollars": "Dollars",
+  "economy.currency.coins": "Coins",
+  "economy.currency.diamonds": "Diamonds",
+  "economy.balance.format": "%s: %d",
+  "economy.transfer.success": "Transferred %.2f %s to player %s",
+  "economy.transfer.failed": "Insufficient funds!"
 }

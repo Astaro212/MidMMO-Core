@@ -1,8 +1,9 @@
 package astaro.midmmo;
 
+import astaro.midmmo.core.commands.EcoCommands;
 import astaro.midmmo.core.commands.LevelAndExp;
 import astaro.midmmo.core.commands.RegisterCommands;
-import astaro.midmmo.core.data.CreateTable;
+import astaro.midmmo.core.data.connectors.CreateTable;
 import astaro.midmmo.core.expsystem.MobType;
 import astaro.midmmo.core.registries.MenuRegistry;
 import com.mojang.brigadier.CommandDispatcher;
@@ -119,6 +120,7 @@ public class Midmmo {
 
     public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher){
         LevelAndExp.register(dispatcher);
+        EcoCommands.register(dispatcher);
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent

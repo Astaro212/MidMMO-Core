@@ -2,6 +2,7 @@ package astaro.midmmo.core.handlers;
 
 import astaro.midmmo.core.attributes.stats.PlayerStatsManager;
 import astaro.midmmo.core.data.PlayerData;
+import astaro.midmmo.core.data.SQL.SQLWorker;
 import astaro.midmmo.core.data.cache.PlayerDataCache;
 import astaro.midmmo.core.expsystem.PlayerExp;
 import astaro.midmmo.core.networking.Packets.RaceMenuPacket;
@@ -31,7 +32,7 @@ public class LoginHandler {
         }
         //If no data in database -> create player
         if (UserFinder.findUser(username) != null) {
-            PlayerData.getDataAsync(username, uuid).thenAccept(playerData -> {
+            SQLWorker.getDataAsync(username, uuid).thenAccept(playerData -> {
                 if (!player.isRemoved() && player.server.isRunning()) {
                     if (playerData == null) {
                         player.setGameMode(GameType.SPECTATOR);
@@ -79,8 +80,7 @@ public class LoginHandler {
     public static void onPlayerExit(@NotNull ServerPlayer player) {
         PlayerData cachedData = PlayerDataCache.get(player.getUUID());
         if (cachedData != null) {
-            PlayerData.updateDataAsync(player.getName().getString(), player.getUUID(),
-                            cachedData.getPlayerLvl(), cachedData.getPlayerExp(), cachedData.getPlayerChar())
+            SQLWorker.updateDataAsync(player.getName().getString(), player.getUUID(), cachedData)
                     .thenRun(() -> PlayerDataCache.remove(player.getUUID())).exceptionally(throwable -> {
                         Logger.getLogger(LoginHandler.class.getName()).log(Level.SEVERE,
                                 "Failed to save player data for " + player.getName(), throwable);
