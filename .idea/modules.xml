@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/api/MidMMO-Core.api.main.iml" filepath="$PROJECT_DIR$/.idea/modules/api/MidMMO-Core.api.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/MidMMO-Core.client.main.iml" filepath="$PROJECT_DIR$/.idea/modules/client/MidMMO-Core.client.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/MidMMO-Core.common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/MidMMO-Core.common.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/MidMMO-Core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/MidMMO-Core.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server/MidMMO-Core.server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/server/MidMMO-Core.server.main.iml" />
     </modules>
   </component>
 </project>

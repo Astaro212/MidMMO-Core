@@ -2,12 +2,61 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'idea'
-    id 'net.neoforged.moddev' version '2.0.113'
+    id 'net.neoforged.moddev' version '2.0.140'
     id 'com.gradleup.shadow' version '8.3.6'
 }
 
 version = mod_version
 group = mod_group_id
+
+
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'idea'
+    apply plugin: 'net.neoforged.moddev'
+
+    version = rootProject.mod_version
+    group = rootProject.mod_group_id
+
+    java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+    neoForge {
+        version = rootProject.neo_version
+        parchment {
+            mappingsVersion = rootProject.parchment_mappings_version
+            minecraftVersion = rootProject.parchment_minecraft_version
+        }
+        mods {
+            "${mod_id}" {
+                sourceSet(sourceSets.main)
+            }
+        }
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url = 'https://maven.neoforged.net' }
+    }
+
+    dependencies {
+        compileOnly 'org.slf4j:slf4j-api:2.0.16'
+        implementation 'com.github.ben-manes.caffeine:caffeine:3.2.2'
+    }
+
+    apply plugin: 'maven-publish'
+
+    publishing {
+        publications {
+            register("${project.name}Java", MavenPublication) {
+                from components.java
+                artifactId = "${rootProject.mod_id}-${project.name}"
+            }
+        }
+    }
+}
+
+
 
 repositories {
     mavenLocal()
@@ -20,7 +69,6 @@ base {
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 neoForge {
-    // Specify the version of NeoForge to use.
     version = project.neo_version
 
     parchment {
@@ -28,68 +76,33 @@ neoForge {
         minecraftVersion = project.parchment_minecraft_version
     }
 
-    // This line is optional. Access Transformers are automatically detected
-    // accessTransformers.add('src/main/resources/META-INF/accesstransformer.cfg')
-
-    // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
     runs {
-        client {
-            client()
-
-            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        }
-
-        server {
-            server()
-            programArgument '--nogui'
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        }
-
-        // This run config launches GameTestServer and runs all registered gametests, then exits.
-        // By default, the server will crash when no gametests are provided.
-        // The gametest system is also enabled by default for other run configs under the /test command.
-        gameTestServer {
-            type = "gameTestServer"
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        }
-
-        data {
-            clientData()
-
-            // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
-            // gameDirectory = project.file('run-data')
-
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
-        }
-
-        // applies to all the run configs above
         configureEach {
-            // Recommended logging data for a userdev environment
-            // The markers can be added/remove as needed separated by commas.
-            // "SCAN": For mods scan.
-            // "REGISTRIES": For firing of registry events.
-            // "REGISTRYDUMP": For getting the contents of all registries.
             systemProperty 'forge.logging.markers', 'REGISTRIES'
-
-            // Recommended logging level for the console
-            // You can set various levels here.
-            // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             logLevel = org.slf4j.event.Level.DEBUG
         }
+        client { client() }
+        server { server(); programArgument '--nogui' }
     }
 
     mods {
-        // define mod <-> source bindings
-        // these are used to tell the game which sources are for which mod
-        // mostly optional in a single mod project
-        // but multi mod projects should define one per mod
         "${mod_id}" {
             sourceSet(sourceSets.main)
         }
     }
+}
+
+dependencies {
+    implementation project(':api')
+    implementation project(':common')
+    implementation project(':server')
+    implementation project(':client')
+    setupShade(it)
+}
+
+def setupShade(DependencyHandler handler) {
+    handler.add('implementation', 'org.postgresql:postgresql:42.7.7')
+    handler.add('implementation', 'com.zaxxer:HikariCP:5.0.1')
 }
 
 // Include resources generated by data generators.
@@ -107,16 +120,6 @@ configurations {
             force 'com.google.errorprone:error_prone_annotations:2.23.0'
         }
     }
-}
-
-dependencies {
-    shade 'org.mariadb.jdbc:mariadb-java-client:3.5.3'
-    shade 'com.mysql:mysql-connector-j:9.2.0'
-    shade 'org.postgresql:postgresql:42.7.7'
-    shade 'com.zaxxer:HikariCP:6.3.0'
-    shade 'com.github.ben-manes.caffeine:caffeine:3.2.2'
-    compileOnly 'com.google.errorprone:error_prone_annotations:2.23.0'
-    compileOnly 'org.slf4j:slf4j-api:2.0.16'
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
@@ -160,10 +163,15 @@ publishing {
 }
 
 shadowJar {
-    exclude 'org/slf4j/**'
-    exclude 'META-INF/services/org.slf4j.*'
     archiveClassifier.set('')
-    configurations = [project.configurations.shade]
+    configurations = [project.configurations.runtimeClasspath]
+
+    exclude 'com/google/errorprone/**'
+    exclude 'org/checkerframework/**'
+    exclude 'org/slf4j/**'
+
+    relocate 'com.zaxxer.hikari', 'com.astaro.midmmo.shadow.hikari'
+    relocate 'org.postgresql', 'com.astaro.midmmo.shadow.postgresql'
 }
 
 assemble.dependsOn(shadowJar)

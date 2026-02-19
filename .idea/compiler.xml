@@ -4,6 +4,13 @@
     <bytecodeTargetLevel target="21" />
   </component>
   <component name="JavacSettings">
-    <option name="ADDITIONAL_OPTIONS_STRING" value="--add-exports org.slf4j/org.slf4j.spi=neoforge" />
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="MidMMO-Core" options="--add-exports org.slf4j/org.slf4j.spi=neoforge" />
+      <module name="MidMMO-Core.main" options="--add-exports org.slf4j/org.slf4j.spi=neoforge" />
+      <module name="MidMMO-Core.test" options="--add-exports org.slf4j/org.slf4j.spi=neoforge" />
+      <module name="MidMMO-Engine" options="--add-exports org.slf4j/org.slf4j.spi=neoforge" />
+      <module name="MidMMO-Engine.main" options="--add-exports org.slf4j/org.slf4j.spi=neoforge" />
+      <module name="MidMMO-Engine.test" options="--add-exports org.slf4j/org.slf4j.spi=neoforge" />
+    </option>
   </component>
 </project>

@@ -1,0 +1,66 @@
+package com.astaro.midmmo.common.network.packets.network;
+
+
+import astaro.midmmo.core.GUI.classSelection.ClassSelectionScreen;
+import astaro.midmmo.core.data.cache.ClientDataCache;
+import astaro.midmmo.core.data.cache.PlayerDataSync;
+import astaro.midmmo.core.networking.Packets.RaceMenuPacket;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class ClientPacketHandler {
+
+
+    @OnlyIn(Dist.CLIENT)
+    public static void execute() {
+        Player player = Minecraft.getInstance().player;
+        Minecraft.getInstance().execute(() -> {
+            if (player != null) {
+                Minecraft.getInstance().setScreen(new ClassSelectionScreen(
+                        Component.translatable("midmmo.class_select")));
+            }
+        });
+    }
+
+
+    public static void handleDataOnNetwork(final RaceMenuPacket data, final IPayloadContext context) {
+        context.enqueueWork(() -> {
+            data.windowId();
+        }).exceptionally(e -> {
+            // Handle exception
+            context.disconnect(Component.translatable("midmmo.networking.failed", e.getMessage()));
+            return null;
+        });
+        execute();
+    }
+
+    public static void syncClientData(final PlayerDataSync data, final IPayloadContext context) {
+        context.enqueueWork(() -> {
+            try {
+                ClientDataCache.updatePlayerData(
+                        data.uuid(),
+                        data.level(),
+                        data.exp(),
+                        data.playerClazz(),
+                        data.playerRace(),
+                        data.stats()
+                );
+            } catch (Exception e) {
+                Logger.getLogger("Stats Menu").log(Level.SEVERE, "Failed to sync data" + e);
+            }
+        }).exceptionally(e -> {
+            context.disconnect(Component.translatable("midmmo.networking.failed", e.getMessage()));
+            return null;
+        });
+    }
+}
+
+
+
