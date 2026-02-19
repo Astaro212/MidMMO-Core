@@ -1,0 +1,21 @@
+dependencies {
+    implementation project(':common')
+    implementation project(':api')
+
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.5.3'
+    implementation 'com.mysql:mysql-connector-j:9.2.0'
+    implementation 'org.postgresql:postgresql:42.7.7'
+    implementation 'com.zaxxer:HikariCP:5.0.1'
+    
+
+}
+
+neoForge {
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/main/resources' }

@@ -1,0 +1,15 @@
+dependencies {
+    implementation project(':api')
+    implementation project(':client')
+    implementation "com.github.ben-manes.caffeine:caffeine:3.2.2"
+}
+
+neoForge {
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/main/resources' }

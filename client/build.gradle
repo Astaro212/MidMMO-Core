@@ -1,0 +1,14 @@
+dependencies {
+    implementation project(':common')
+    implementation project(':api')
+}
+
+neoForge {
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/main/resources' }
