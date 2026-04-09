@@ -1,4 +1,4 @@
-package com.astaro.midmmo.api.events;
+package com.astaro.midmmo.server.events;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
