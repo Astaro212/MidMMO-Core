@@ -9,6 +9,10 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
+import static com.astaro.midmmo.client.GUI.HUD.ExpBar.renderExpBar;
+import static com.astaro.midmmo.client.GUI.HUD.HealthAndManaBar.renderHealthBar;
+import static com.astaro.midmmo.client.GUI.HUD.HealthAndManaBar.renderManaCircle;
+
 
 @EventBusSubscriber(Dist.CLIENT)
 public class PlayerHUD {
