@@ -1,6 +1,5 @@
 package com.astaro.midmmo.common.network;
 
-import com.astaro.midmmo.client.network.ClientPayloadHandler;
 import com.astaro.midmmo.common.network.S2C.EquipmentSyncPacket;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -18,7 +17,7 @@ public class NetworkHandler {
         registrar.playToClient(
                 EquipmentSyncPacket.TYPE,
                 EquipmentSyncPacket.CODEC,
-                ClientPayloadHandler::handleEquipmentSync
+                (payload, context) -> {}
         );
     }
 }
