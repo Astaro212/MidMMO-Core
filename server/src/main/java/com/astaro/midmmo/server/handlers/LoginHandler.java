@@ -1,11 +1,13 @@
 package com.astaro.midmmo.server.handlers;
 
-import astaro.midmmo.core.attributes.stats.PlayerStatsManager;
-import astaro.midmmo.core.data.PlayerData;
-import astaro.midmmo.core.data.SQL.SQLWorker;
-import astaro.midmmo.core.data.cache.PlayerDataCache;
-import astaro.midmmo.core.expsystem.PlayerExp;
-import astaro.midmmo.core.networking.Packets.RaceMenuPacket;
+import com.astaro.midmmo.common.network.S2C.RaceMenuPacket;
+import com.astaro.midmmo.server.MidMMOServer;
+import com.astaro.midmmo.server.cache.PlayerDataCache;
+import com.astaro.midmmo.server.database.SQLWorker;
+import com.astaro.midmmo.server.experience.PlayerExp;
+import com.astaro.midmmo.server.managers.PlayerStatsManager;
+import com.astaro.midmmo.server.managers.ProfileManager;
+import com.astaro.midmmo.server.player.PlayerProfile;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,72 +24,51 @@ public class LoginHandler {
 
     //Checks if player exists in site database
     public static void onPlayerLogin(@NotNull ServerPlayer player) {
-        String username = player.getName().getString();
         UUID uuid = player.getUUID();
         //Checks player cached data
-        if (PlayerDataCache.contains(uuid)) {
-            PlayerData cachedData = PlayerDataCache.get(uuid);
+        if (MidMMOServer.playerCache.contains(uuid)) {
+            PlayerProfile cachedData = MidMMOServer.playerCache.get(uuid);
             applyPlayerData(player, cachedData);
             return;
         }
         //If no data in database -> create player
-        if (UserFinder.findUser(username) != null) {
-            SQLWorker.getDataAsync(username, uuid).thenAccept(playerData -> {
-                if (!player.isRemoved() && player.server.isRunning()) {
-                    if (playerData == null) {
-                        player.setGameMode(GameType.SPECTATOR);
-                        PacketDistributor.sendToPlayer(player, new RaceMenuPacket(player.containerMenu.containerId, "", ""));
-                    } else {
-                        //else applies playerData with stats and level to the cache
-                        synchronized (PlayerDataCache.class) {
-                            if (PlayerDataCache.get(uuid) == null) {
-                                applyPlayerData(player, playerData);
-                            }
-                        }
-                    }
+        try {
+            ProfileManager.loadProfile(player);
+            PlayerProfile profile = ProfileManager.getProfiles().get(player.getUUID());
+            synchronized (PlayerDataCache.class) {
+                if (MidMMOServer.playerCache.get(uuid) == null) {
+                    applyPlayerData(player, profile);
                 }
-            }).exceptionally(throwable -> {
-                Logger.getLogger(LoginHandler.class.getName()).log(Level.SEVERE,
-                        "Failed to load data for " + username, throwable);
-                return null;
-            });
-        } else {
-            //If no user profile on db -> disconnects player
-            if (player instanceof ServerPlayer serverPlayer) {
-                serverPlayer.connection.disconnect(Component.translatable("midmmo.user_is_not_exists"));
             }
+        } catch (Exception ex) {
+            Logger.getLogger(LoginHandler.class.getName()).log(Level.SEVERE,
+                    "Failed to load data for " + player.getName(), ex);
         }
     }
 
+
     //Apply player stats and exp
-    private static void applyPlayerData(ServerPlayer player, @NotNull PlayerData data) {
-        PlayerStatsManager manager = data.getPlayerChar();
+    private static void applyPlayerData(ServerPlayer player, @NotNull PlayerProfile data) {
+        PlayerStatsManager manager = data.getStatsManager();
         if (manager == null) {
-            manager = new PlayerStatsManager(player);
-            data.setPlayerChar(manager);
+            manager = new PlayerStatsManager(data);
+            data.setBaseStats(manager);
         }
 
         PlayerExp playerExp = new PlayerExp(player.getUUID(), player.getName().
                 getString(), data.getPlayerLvl(), data.getPlayerExp());
         manager.setPlayerLevel(playerExp.getPlayerLevel());
 
-        PlayerDataCache.put(player.getUUID(), data);
-        if(PlayerDataCache.get(player.getUUID()) != null) {
+        MidMMOServer.playerCache.put(player.getUUID(), data);
+        if (MidMMOServer.playerCache.get(player.getUUID()) != null) {
             player.sendSystemMessage(Component.translatable("midmmo.user_loaded", player.getName()).withStyle(ChatFormatting.GREEN));
         }
     }
 
     //Actions on player exit
     public static void onPlayerExit(@NotNull ServerPlayer player) {
-        PlayerData cachedData = PlayerDataCache.get(player.getUUID());
-        if (cachedData != null) {
-            SQLWorker.updateDataAsync(player.getName().getString(), player.getUUID(), cachedData)
-                    .thenRun(() -> PlayerDataCache.remove(player.getUUID())).exceptionally(throwable -> {
-                        Logger.getLogger(LoginHandler.class.getName()).log(Level.SEVERE,
-                                "Failed to save player data for " + player.getName(), throwable);
-                        return null;
-                    });
-        }
+        PlayerProfile cachedData = MidMMOServer.playerCache.get(player.getUUID());
+        ProfileManager.saveProfile(player, cachedData);
     }
 
 }
