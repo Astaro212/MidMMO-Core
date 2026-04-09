@@ -7,18 +7,18 @@
   "midmmo.stat.luck": "",
   "midmmo.stat.spirit": "",
 
-  "element.midmmo.none": " ",
-  "element.midmmo.fire": "Огонь",
-  "element.midmmo.earth": "Земля",
-  "element.midmmo.air": "Воздух",
-  "element.midmmo.lightning": "Гром",
-  "element.midmmo.light": "Свет",
-  "element.midmmo.blood": "Кровь",
-  "element.midmmo.ice": "Лёд",
-  "element.midmmo.void": "Бездна",
+  "midmmo.element.none": " ",
+  "midmmo.element.fire": "Огонь",
+  "midmmo.element.earth": "Земля",
+  "midmmo.element.air": "Воздух",
+  "midmmo.element.thunder": "Гром",
+  "midmmo.element.light": "Свет",
+  "midmmo.element.blood": "Кровь",
+  "midmmo.element.ice": "Лёд",
+  "midmmo.element.void": "Бездна",
 
 
-  "player.midmmo": "Игрок",
+  "midmmo.player": "Игрок",
   "midmmo.user_is_not_exists": "Пользователь не найден. Зарегистрируйтесь!",
   "midmmo.user_loaded": "Профиль загружен. Приветствую в Мире, %s. ",
   "midmmo.networking.failed": "Соединение нарушено. Сообщите в поддержку, \nесли считаете что это ошибка",
@@ -62,15 +62,15 @@
   "midmmo.stats.menu": "Окно персонажа",
 
 
-  "key.midmmo.statsmenu": "Открыть окно персонажа",
-  "key.categories.interface": "Интерфейс MidMMO",
+  "midmmo.statsmenu.key": "Открыть окно персонажа",
+  "midmmo.key.categories.interface": "Интерфейс MidMMO",
   "narration.selection.list": "Характеристики",
-  "stat.entry": "%s : %d",
+  "midmmo.stat.entry": "%s : %d",
 
 
-  "economy.currency.dollars": "Доллары",
-  "economy.currency.coins": "Монеты",
-  "economy.currency.diamonds": "Алмазы",
+  "economy.currency.first": "Доллары",
+  "economy.currency.second": "Монеты",
+  "economy.currency.third": "Алмазы",
   "economy.balance.format": "%s: %s",
   "economy.transfer.success": "Переведено %.2f %s игроку %s",
   "economy.transfer.failed": "Недостаточно средств!"
