@@ -1,9 +1,9 @@
 package com.astaro.midmmo.server.registries;
 
-import astaro.midmmo.core.attributes.BasicAttribute;
-import astaro.midmmo.core.attributes.DamageAttribute;
-import astaro.midmmo.core.attributes.PercentAttribute;
-import astaro.midmmo.core.attributes.ResistAttribute;
+import com.astaro.midmmo.server.attributes.attribute.BasicAttribute;
+import com.astaro.midmmo.server.attributes.attribute.DamageAttribute;
+import com.astaro.midmmo.server.attributes.attribute.PercentAttribute;
+import com.astaro.midmmo.server.attributes.attribute.ResistAttribute;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -16,7 +16,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 
-@EventBusSubscriber(modid = "MidMMO", bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = "MidMMO")
 public class StatsRegistry {
 
 
