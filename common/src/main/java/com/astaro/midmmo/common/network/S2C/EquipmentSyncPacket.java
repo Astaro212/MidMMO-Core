@@ -3,13 +3,11 @@ package com.astaro.midmmo.common.network.S2C;
 import com.astaro.midmmo.api.data.EquipmentSlotType;
 import com.astaro.midmmo.api.data.StatType;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public record EquipmentSyncPacket(Map<EquipmentSlotType, Map<StatType, Double>> equipmentData)
