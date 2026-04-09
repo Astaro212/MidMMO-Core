@@ -1,9 +1,10 @@
 package com.astaro.midmmo.server.experience;
 
 
-import astaro.midmmo.core.data.PlayerData;
-import astaro.midmmo.core.data.cache.PlayerDataCache;
-import astaro.midmmo.core.networking.Packets.StatRequestPacket;
+import com.astaro.midmmo.common.network.C2S.StatRequestPacket;
+import com.astaro.midmmo.server.MidMMOServer;
+import com.astaro.midmmo.server.cache.PlayerDataCache;
+import com.astaro.midmmo.server.player.PlayerProfile;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,7 +16,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.UUID;
 
-import static astaro.midmmo.Midmmo.MODID;
+import static com.astaro.midmmo.api.Api.MODID;
 
 //Exp change event listener
 
@@ -43,14 +44,14 @@ public class ExpListeners {
         playerExp.addExperience(expGained);
         playerExp.checkAndUpdateLevel();
         player.sendSystemMessage(Component.translatable("midmmo.exp_gained_for", expGained, mobName));
-        PacketDistributor.sendToServer(new StatRequestPacket());
+        PacketDistributor.sendToPlayer(player, new StatRequestPacket());
 
     }
 
     //Get current player data
     private static PlayerExp getOrCreateData(UUID uuid, String playerName) {
 
-        PlayerData data = PlayerDataCache.get(uuid);
+        PlayerProfile data = MidMMOServer.playerCache.get(uuid);
         if (data != null) {
             return new PlayerExp(uuid, playerName, data.getPlayerLvl(), data.getPlayerExp());
         } else {

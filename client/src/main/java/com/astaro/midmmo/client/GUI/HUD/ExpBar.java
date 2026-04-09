@@ -60,4 +60,4 @@ public class ExpBar {
         return (level <= 30) ? (float) (150 * Math.pow(1.4, level - 1)) : (float) (1000 * Math.pow(1.3, level - 1));
     }
 }
-}
+
