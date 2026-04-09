@@ -13,38 +13,37 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
 
-
 //Moved to new class
 public class SQLWorker {
 
     private final Logger LOGGER = LoggerFactory.getLogger("MidMMO-DB");
 
-        //Added generic select (using new mapper)
-        public <T> CompletableFuture<List<T>> queryList(String sql, Class<T> clazz, Object... params) {
-            return CompletableFuture.supplyAsync(() -> {
-                List<T> result = new ArrayList<>();
-                try (Connection conn = DatabaseConnector.connect();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
+    //Added generic select (using new mapper)
+    public <T> CompletableFuture<List<T>> queryList(String sql, Class<T> clazz, Object... params) {
+        return CompletableFuture.supplyAsync(() -> {
+            List<T> result = new ArrayList<>();
+            try (Connection conn = DatabaseConnector.connect();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-                    for (int i = 0; i < params.length; i++) {
-                        stmt.setObject(i + 1, params[i]);
+                for (int i = 0; i < params.length; i++) {
+                    stmt.setObject(i + 1, params[i]);
 
-                    }
-                    try(ResultSet rs = stmt.executeQuery()) {
-                        while (rs.next()) {
-                            result.add(GenericMapper.map(rs, clazz));
-                        }
-                    }
-                } catch (Exception e) {
-                    LOGGER.error("Query failed: {}", sql, e);
                 }
-                return result;
-            }).exceptionally(
-                    exc -> {
-                        throw new CompletionException(exc);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        result.add(GenericMapper.map(rs, clazz));
                     }
-            );
-        }
+                }
+            } catch (Exception e) {
+                LOGGER.error("Query failed: {}", sql, e);
+            }
+            return result;
+        }).exceptionally(
+                exc -> {
+                    throw new CompletionException(exc);
+                }
+        );
+    }
 
     // UPDATE/INSERT/ETC
     public CompletableFuture<Integer> execute(String sql, Object... params) {
