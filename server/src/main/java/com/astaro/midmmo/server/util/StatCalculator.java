@@ -19,7 +19,7 @@ public class StatCalculator {
 
     public static Map<StatType, Double> calculate(PlayerProfile profile) {
         Map<StatType, Double> finalStats = new EnumMap<>(StatType.class);
-        var base = profile.getBaseStats();
+        var base = profile.getStatsManager();
 
         for (StatType stat : StatType.values()) {
             double value = base.getBaseValue(stat) + base.getBonusValue(stat) + base.getModifierValue(stat);
