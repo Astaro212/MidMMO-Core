@@ -7,23 +7,18 @@ import com.astaro.midmmo.client.info.classes.ClassInfo;
 import com.astaro.midmmo.client.info.classes.ClassManager;
 import com.astaro.midmmo.client.info.races.RaceInfo;
 import com.astaro.midmmo.client.info.races.RaceManager;
-import com.astaro.midmmo.common.network.packets.RaceMenuPacket;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.textures.GpuTextureView;
+import com.astaro.midmmo.common.network.S2C.RaceMenuPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.PlayerModelType;
 import net.minecraft.world.entity.player.PlayerSkin;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,7 +143,6 @@ public class ClassSelectionScreen extends Screen  /*extends AbstractContainerScr
 
 
     private void showRaceSelection(int xOffset, int yOffset, int sGap) {
-        ;
         for (RaceInfo race : RaceManager.RACE_MAP.values()) {
 
             SelectionButtons raceBtn = createStyledButton(Component.translatable("midmmo.race." + race.raceName), xOffset, yOffset, b -> {
@@ -265,7 +259,7 @@ public class ClassSelectionScreen extends Screen  /*extends AbstractContainerScr
     public void onClose() {
         // Stop any handlers or check smth here
         if (race != null && className != null) {
-            ClientPacketDistributor.sendToServer(new RaceMenuPacket(0, race, className));
+            ClientPacketDistributor.sendToServer(new RaceMenuPacket(0, raceId, classId));
             this.minecraft.player.displayClientMessage(Component.translatable(
                             "midmmo.classrace_picked", race, className)
                     , false);
