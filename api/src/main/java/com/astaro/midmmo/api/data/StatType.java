@@ -44,7 +44,10 @@ public enum StatType {
 
     ACCURACY(50, "accuracy",false),
     ELEMENTAL_DAMAGE_ALL(110, "ele_dmg_all", false),
-    ELEMENTAL_RESIST_ALL(111, "ele_res_all", false);
+    ELEMENTAL_RESIST_ALL(111, "ele_res_all", false),
+
+    LEVEL(190567,"level", false),
+    EXP(195689,"exp", false);
 
     private final int networkId;
     private final String id;
