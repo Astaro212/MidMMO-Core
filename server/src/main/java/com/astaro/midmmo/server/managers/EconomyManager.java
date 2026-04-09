@@ -1,8 +1,8 @@
 package com.astaro.midmmo.server.managers;
 
-import astaro.midmmo.api.economy.EcoAPI;
-import astaro.midmmo.core.data.PlayerData;
-import astaro.midmmo.core.data.cache.PlayerDataCache;
+
+import com.astaro.midmmo.api.interfaces.EcoAPI;
+import com.astaro.midmmo.server.cache.PlayerDataCache;
 import com.astaro.midmmo.server.economy.Economy;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
