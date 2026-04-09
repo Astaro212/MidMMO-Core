@@ -52,7 +52,7 @@ public enum MobType {
     public static void loadMobs(ResourceManager manager) {
         ENTITY_NAME.clear();
 
-        ResourceLocation mobLocation = ResourceLocation.fromNamespaceAndPath("assets/midmmo", "data/midmmo/mobs/mobs.json");
+        ResourceLocation mobLocation = ResourceLocation.fromNamespaceAndPath("midmmo", "data/mobs/mobs.json");
         try {
             // Проверяем наличие ресурса
             if (manager.getResource(mobLocation).isEmpty()) {
