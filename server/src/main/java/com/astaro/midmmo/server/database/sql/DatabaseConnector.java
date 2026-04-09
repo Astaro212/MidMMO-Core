@@ -44,15 +44,21 @@ public class DatabaseConnector {
             config.setUsername(Config.getUsername());
             config.setPassword(Config.getPassword());
 
-            config.setMaximumPoolSize(10);
-            config.setMinimumIdle(2);
+            config.setMaximumPoolSize(15);
+            config.setMinimumIdle(5);
             config.setMaxLifetime(1800000);
             config.setKeepaliveTime(60000);
             config.setConnectionTimeout(5000);
 
+            config.addDataSourceProperty("useServerPrepStmts", "true");
             config.addDataSourceProperty("cachePrepStmts", "true");
             config.addDataSourceProperty("prepStmtCacheSize", "250");
             config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+
+            if(type.equals("postgresql")){
+                config.addDataSourceProperty("rewriteBatchedStatements", "true");
+                config.addDataSourceProperty("implicitCachingEnabled", "true");
+            }
 
 
             dataSource = new HikariDataSource(config);
