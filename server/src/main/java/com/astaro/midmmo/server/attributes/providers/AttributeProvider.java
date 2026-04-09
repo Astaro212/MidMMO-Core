@@ -1,6 +1,7 @@
 package com.astaro.midmmo.server.attributes.providers;
 
-import com.astaro.midmmo.api.stats.StatsAPI;
+import com.astaro.midmmo.api.data.StatType;
+import com.astaro.midmmo.api.interfaces.StatsAPI;
 import com.astaro.midmmo.server.managers.PlayerStatsManager;
 import com.astaro.midmmo.server.cache.PlayerDataCache;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,7 +23,7 @@ public class AttributeProvider implements StatsAPI {
     }
 
     private final PlayerStatsManager playerStats;
-    private final Map<String, Double> mob_stats;
+    private final Map<StatType, Double> mob_stats;
 
     // Constructor for players
     public AttributeProvider(PlayerStatsManager stats) {
@@ -31,18 +32,18 @@ public class AttributeProvider implements StatsAPI {
     }
 
     // Constructor for mobs with custom stats
-    public AttributeProvider(Map<String, Double> customStats) {
+    public AttributeProvider(Map<StatType, Double> customStats) {
         this.playerStats = null;
         this.mob_stats = new ConcurrentHashMap<>(customStats);
     }
 
     // Default constructor for basic mobs
     public AttributeProvider() {
-        this(DEFAULT_MOB_STATS);
+        this((PlayerStatsManager) DEFAULT_MOB_STATS);
     }
 
     @Override
-    public double getStat(String stat) {
+    public double getStat(StatType stat) {
         // First check player stats if available
         if (playerStats != null) {
             return playerStats.getStat(stat);
@@ -67,9 +68,9 @@ public class AttributeProvider implements StatsAPI {
     // Factory method for creating appropriate provider
     public static AttributeProvider createFor(LivingEntity entity) {
         if (entity instanceof ServerPlayer player) {
-            PlayerStatsManager stats = PlayerDataCache.get(player.getUUID()).getPlayerChar();
+            PlayerStatsManager stats = PlayerDataCache.get(player.getUUID()).getStatsManager();
             if (stats != null) return new AttributeProvider(stats);
-            return new AttributeProvider(new PlayerStatsManager(player));
+            return new AttributeProvider(new PlayerStatsManager(player.getGameProfile()));
         }
 
         // Here you could add special handling for different mob types
@@ -77,24 +78,24 @@ public class AttributeProvider implements StatsAPI {
     }
 
     @Override
-    public Map<String, Double> getStats() {
+    public Map<StatType, Double> getStats() {
         return Map.of();
     }
 
 
     // Method to add/update a stat for mobs
     @Override
-    public void setStat(String stat, double value) {
+    public void setStat(StatType stat, double value) {
        if(playerStats == null) {
            mob_stats.put(stat, value);
        }
     }
 
     @Override
-    public void addStat(String stat, double value) {
+    public void addStat(StatType stat, double value) {
     }
 
     @Override
-    public void removeStat(String stat, double value) {
+    public void removeStat(StatType stat, double value) {
     }
 }
