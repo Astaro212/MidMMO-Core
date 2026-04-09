@@ -32,8 +32,8 @@ public enum ElementType {
     public static final StreamCodec<ByteBuf, ElementType> STREAM_CODEC = ByteBufCodecs.VAR_INT
             .map(ElementType::byId, ElementType::getNetworkId);
 
-    ElementType(int damageStat, String displayName, ChatFormatting color) {
-        this.networkId = damageStat;
+    ElementType(int networkId, String displayName, ChatFormatting color) {
+        this.networkId = networkId;
         this.displayName = displayName;
         this.color = color;
     }
