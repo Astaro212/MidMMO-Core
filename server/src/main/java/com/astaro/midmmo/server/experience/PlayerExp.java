@@ -1,8 +1,7 @@
 package com.astaro.midmmo.server.experience;
 
-import astaro.midmmo.api.exp.ExpAPI;
-import astaro.midmmo.core.data.PlayerData;
-import astaro.midmmo.core.data.cache.PlayerDataCache;
+
+import com.astaro.midmmo.api.interfaces.ExpAPI;
 
 import java.util.UUID;
 
