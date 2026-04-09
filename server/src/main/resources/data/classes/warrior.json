@@ -1,0 +1,15 @@
+[
+  {
+    "bonuses": {
+      "strength": "+5",
+      "recovery": "+3",
+      "mana_type": "energy"
+    },
+    "available_skills": {
+      "sword_storm": 2,
+      "death_crouch": 1
+    },
+    "restrictions": {
+    }
+  }
+]
