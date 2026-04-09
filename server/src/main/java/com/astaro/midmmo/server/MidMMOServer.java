@@ -1,6 +1,7 @@
 package com.astaro.midmmo.server;
 
 import com.astaro.midmmo.server.cache.PlayerDataCache;
+import com.astaro.midmmo.server.database.SQLWorker;
 import com.astaro.midmmo.server.database.sql.TableInitialize;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
@@ -35,6 +36,7 @@ public class MidMMOServer {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     public static PlayerDataCache playerCache;
+    public static SQLWorker sqlWorker;
 
     // Creates a creative tab with the id "midmmo:example_tab" for the example item, that is placed after the combat tabs
     // The constructor for the mod class is the first code that is run when your mod is loaded.
@@ -74,17 +76,9 @@ public class MidMMOServer {
             }
         }
         playerCache = new PlayerDataCache();
+        sqlWorker = new SQLWorker();
         LOGGER.info("HELLO from server starting");
     }
 
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-    @EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
-    public static class ClientModEvents {
-        @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) {
-            // Some client setup code
-            LOGGER.info("HELLO FROM CLIENT SETUP");
-            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
-        }
-    }
+
 }
