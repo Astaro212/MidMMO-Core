@@ -1,13 +1,12 @@
-package com.astaro.midmmo.core.GUI.HUD;
+package com.astaro.midmmo.client.GUI.HUD;
 
-import astaro.midmmo.core.data.cache.ClientDataCache;
+
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
 
-public class    HealthAndManaBar implements LayeredDraw.Layer {
+public class HealthAndManaBar {
 
     public static final Minecraft minecraft = Minecraft.getInstance();
 
