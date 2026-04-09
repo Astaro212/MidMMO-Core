@@ -7,6 +7,9 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 public class ElementalSystem implements ElementalAPI {
 
     private final ElementType elementType;
@@ -15,16 +18,10 @@ public class ElementalSystem implements ElementalAPI {
         this.elementType = elementType;
     }
 
-
     public static final ElementalSystem NONE = new ElementalSystem(ElementType.NONE);
-    public static final ElementalSystem FIRE = new ElementalSystem(ElementType.FIRE);
-    public static final ElementalSystem EARTH = new ElementalSystem(ElementType.EARTH);
-    public static final ElementalSystem AIR = new ElementalSystem(ElementType.AIR);
-    public static final ElementalSystem LIGHTNING = new ElementalSystem(ElementType.LIGHTNING);
-    public static final ElementalSystem LIGHT = new ElementalSystem(ElementType.LIGHT);
-    public static final ElementalSystem BLOOD = new ElementalSystem(ElementType.BLOOD);
-    public static final ElementalSystem ICE = new ElementalSystem(ElementType.ICE);
-    public static final ElementalSystem VOID = new ElementalSystem(ElementType.VOID);
+
+    private static final Map<ElementType, ElementalSystem> BY_TYPE = new EnumMap<>(ElementType.class);
+
 
     @Override
     public int getNetworkID() {
@@ -43,20 +40,8 @@ public class ElementalSystem implements ElementalAPI {
 
     @NotNull
     public static ElementalSystem fromElementType(@Nullable ElementType elementType) {
-        if (elementType == null) {
-            return NONE;
-        }
-        return switch (elementType) {
-            case FIRE -> FIRE;
-            case EARTH -> EARTH;
-            case AIR -> AIR;
-            case LIGHTNING -> LIGHTNING;
-            case LIGHT -> LIGHT;
-            case BLOOD -> BLOOD;
-            case ICE -> ICE;
-            case VOID -> VOID;
-            default -> NONE;
-        };
+        if (elementType == null) return NONE;
+        return BY_TYPE.computeIfAbsent(elementType, ElementalSystem::new);
     }
 
     @Nullable
@@ -81,9 +66,6 @@ public class ElementalSystem implements ElementalAPI {
         return result;
     }
 
-    public static ElementalSystem[] getAttackElements() {
-        return new ElementalSystem[]{FIRE, EARTH, AIR, LIGHTNING, LIGHT, BLOOD, ICE, VOID};
-    }
 
     public boolean isPresent() {
         return this != NONE;
