@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 //Use caffeine (thanks to DeepseekR1, i forgot about it)
 public class PlayerDataCache {
 
-    ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()
+    ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
     //Changed to cache
     private final Cache<UUID, PlayerProfile> cache = Caffeine.newBuilder()
@@ -33,7 +33,7 @@ public class PlayerDataCache {
 
 
     //Changed to getIfPresent (was get)
-    public PlayerProfile get(UUID uuid) {
+    public static PlayerProfile get(UUID uuid) {
         return cache.getIfPresent(uuid);
     }
 
