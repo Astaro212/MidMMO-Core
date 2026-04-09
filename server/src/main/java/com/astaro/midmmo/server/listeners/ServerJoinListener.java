@@ -1,6 +1,6 @@
 package com.astaro.midmmo.server.listeners;
 
-import astaro.midmmo.core.handlers.LoginHandler;
+import com.astaro.midmmo.server.handlers.LoginHandler;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
@@ -8,7 +8,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
-import static astaro.midmmo.Midmmo.MODID;
+
+import static com.astaro.midmmo.api.Api.MODID;
 
 
 //Server action (join or leave) event listener
