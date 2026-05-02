@@ -1,5 +1,6 @@
 package com.astaro.midmmo.common.network.S2C;
 
+import com.mojang.datafixers.types.Type;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

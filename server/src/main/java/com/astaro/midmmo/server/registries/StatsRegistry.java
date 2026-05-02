@@ -5,7 +5,7 @@ import com.astaro.midmmo.server.attributes.attribute.DamageAttribute;
 import com.astaro.midmmo.server.attributes.attribute.PercentAttribute;
 import com.astaro.midmmo.server.attributes.attribute.ResistAttribute;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.neoforged.bus.api.IEventBus;
@@ -90,12 +90,12 @@ public class StatsRegistry {
     }
 
     public static AttributeModifier modifyIntAttribute(String id, int value) {
-        ResourceLocation resId = ResourceLocation.fromNamespaceAndPath("assets/midmmo", id);
+        Identifier resId = Identifier.fromNamespaceAndPath("assets/midmmo", id);
         return new AttributeModifier(resId, value, AttributeModifier.Operation.ADD_VALUE);
     }
 
     public static AttributeModifier modifyDoubleAttribute(String id, double value) {
-        ResourceLocation resId = ResourceLocation.fromNamespaceAndPath("assets/midmmo", id);
+        Identifier resId = Identifier.fromNamespaceAndPath("assets/midmmo", id);
         return new AttributeModifier(resId, value, AttributeModifier.Operation.ADD_VALUE);
     }
 }

@@ -33,7 +33,7 @@ public class PlayerDataCache {
 
 
     //Changed to getIfPresent (was get)
-    public static PlayerProfile get(UUID uuid) {
+    public PlayerProfile get(UUID uuid) {
         return cache.getIfPresent(uuid);
     }
 

@@ -3,7 +3,6 @@ package com.astaro.midmmo.server.experience;
 
 import com.astaro.midmmo.common.network.C2S.StatRequestPacket;
 import com.astaro.midmmo.server.MidMMOServer;
-import com.astaro.midmmo.server.cache.PlayerDataCache;
 import com.astaro.midmmo.server.player.PlayerProfile;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -37,9 +36,8 @@ public class ExpListeners {
         //Update syntacsis
         PlayerExp playerExp = getOrCreateData(player.getUUID(), player.getName().getString());
         expGained = MobType.getMobExp(entity.getType()) * MobType.fromEntity(entity).getExpMultiplier();
-        Component mobName = entity.getDisplayName() != null
-                ? entity.getDisplayName()
-                : Component.literal(entity.getType().getDescription().getString());
+        entity.getDisplayName();
+        Component mobName = entity.getDisplayName();
 
         playerExp.addExperience(expGained);
         playerExp.checkAndUpdateLevel();

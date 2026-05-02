@@ -1,5 +1,6 @@
 package com.astaro.midmmo.server.attributes.damage;
 
+import com.astaro.midmmo.api.data.ElementType;
 import net.minecraft.core.Holder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
@@ -11,23 +12,19 @@ import java.util.Set;
 public class CustomDamageSources extends DamageSource  {
 
     private final Set<DamageFlag> flags;
-    private ElementalSystem.ElementType elementType = ElementalSystem.ElementType.NONE;
+    private ElementType elementType = ElementType.NONE;
 
     protected CustomDamageSources(Holder<DamageType> damageType, Entity directEntity, Entity causingEntity, Set<DamageFlag> flags) {
         super(damageType, directEntity, causingEntity);
         this.flags = EnumSet.copyOf(flags);
-        if(damageType == null || flags == null){
-            throw new IllegalArgumentException("DamageType and flags can't be null");
-        }
-
     }
 
     public static Builder builder(Holder<DamageType> damageType) {
         return new Builder(damageType);
     }
 
-    public CustomDamageSources setElement(ElementalSystem.ElementType element) {
-        this.elementType = element != null ? element : ElementalSystem.ElementType.NONE;
+    public CustomDamageSources setElement(ElementType element) {
+        this.elementType = element != null ? element : ElementType.NONE;
         this.flags.add(DamageFlag.ELEMENTAL_DAMAGE);
         return this;
     }
@@ -65,12 +62,12 @@ public class CustomDamageSources extends DamageSource  {
         return flags.contains(DamageFlag.APPLY_EFFECT);
     }
 
-    public ElementalSystem.ElementType getElementType() {
+    public ElementType getElementType() {
         return this.elementType;
     }
 
     public boolean hasElement() {
-        return this.elementType != ElementalSystem.ElementType.NONE;
+        return this.elementType != ElementType.NONE;
     }
 
     public static class Builder {
@@ -78,7 +75,7 @@ public class CustomDamageSources extends DamageSource  {
         private Entity directEntity;
         private Entity causingEntity;
         private final EnumSet<DamageFlag> flags = EnumSet.noneOf(DamageFlag.class);
-        private ElementalSystem.ElementType elementType = ElementalSystem.ElementType.NONE;
+        private ElementType elementType = ElementType.NONE;
 
         public Builder(Holder<DamageType> damageType) {
             this.damageType = damageType;
@@ -98,14 +95,14 @@ public class CustomDamageSources extends DamageSource  {
             this.flags.add(flag);
             return this;
         }
-        public Builder setElement(ElementalSystem.ElementType element) {
+        public Builder setElement(ElementType element) {
             this.elementType = element;
             return this;
         }
 
         public CustomDamageSources build() {
             CustomDamageSources source = new CustomDamageSources(damageType, directEntity, causingEntity, flags);
-            if (elementType != ElementalSystem.ElementType.NONE) {
+            if (elementType != ElementType.NONE) {
                 source.setElement(elementType);
             }
             return source;

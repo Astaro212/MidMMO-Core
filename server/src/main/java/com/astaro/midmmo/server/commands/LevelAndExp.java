@@ -1,9 +1,8 @@
 package com.astaro.midmmo.server.commands;
 
-
-import astaro.midmmo.core.data.PlayerData;
-import astaro.midmmo.core.data.cache.PlayerDataCache;
-import astaro.midmmo.core.expsystem.PlayerExp;
+import com.astaro.midmmo.server.MidMMOServer;
+import com.astaro.midmmo.server.experience.PlayerExp;
+import com.astaro.midmmo.server.player.PlayerProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -56,7 +55,7 @@ public class LevelAndExp {
     //Get data for command
     private static PlayerExp getOrCreateData(UUID uuid, String playerName) {
 
-        PlayerData data = PlayerDataCache.get(uuid);
+        PlayerProfile data = MidMMOServer.playerCache.get(uuid);
         if (data != null) {
             return new PlayerExp(uuid, playerName, data.getPlayerLvl(), data.getPlayerExp());
         } else {

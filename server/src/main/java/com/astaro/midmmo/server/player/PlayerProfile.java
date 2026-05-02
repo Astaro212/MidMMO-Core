@@ -1,8 +1,10 @@
 package com.astaro.midmmo.server.player;
 
 
+import com.astaro.midmmo.api.data.CurrencyType;
 import com.astaro.midmmo.api.data.EquipmentSlotType;
 import com.astaro.midmmo.api.data.StatType;
+import com.astaro.midmmo.server.economy.EconomyManager;
 import com.astaro.midmmo.server.managers.PlayerStatsManager;
 
 import java.util.EnumMap;
@@ -20,7 +22,7 @@ public class PlayerProfile {
     private String playerClass;
     private String playerRace;
 
-    private Map<String, Double> economyData = new ConcurrentHashMap<>();
+    private Map<CurrencyType, Double> economyData = new EnumMap<>(CurrencyType.class);
     private Map<EquipmentSlotType, Map<StatType,Double>> equipment = new EnumMap<>(EquipmentSlotType.class);
     private boolean isDirty = false;
     private boolean statsDirty = false;
@@ -89,26 +91,30 @@ public class PlayerProfile {
         return playerClass;
     }
     private void initializeEconomy(){
-        economyData.putIfAbsent("dollars", 100.0D);
-        economyData.putIfAbsent("coins", 0.0D);
-        economyData.putIfAbsent("diamonds", 0.0D);
+       economyData.put(CurrencyType.FIRST, 100.0D);
+       economyData.put(CurrencyType.SECOND, 100.0D);
+       economyData.put(CurrencyType.THIRD, 100.0D);
     }
 
-    public double getCurrency(String currencyType){
+    private EconomyManager getEconomyManager(){
+        return new EconomyManager();
+    }
+
+    public double getCurrency(CurrencyType currencyType){
         return economyData.getOrDefault(currencyType, 0.0);
     }
 
-    public void setCurrency(String currencyType, double amount) {
+    public void setCurrency(CurrencyType currencyType, double amount) {
         economyData.put(currencyType, Math.max(0, amount));
         markEconomyDirty();
     }
 
-    public void addCurrency(String currencyType, double amount) {
+    public void addCurrency(CurrencyType currencyType, double amount) {
         double current = getCurrency(currencyType);
         setCurrency(currencyType, current + amount);
     }
 
-    public boolean subtractCurrency(String currencyType, double amount) {
+    public boolean subtractCurrency(CurrencyType currencyType, double amount) {
         double current = getCurrency(currencyType);
         if (current >= amount) {
             setCurrency(currencyType, current - amount);
@@ -117,15 +123,15 @@ public class PlayerProfile {
         return false;
     }
 
-    public boolean hasEnough(String currencyType, double amount) {
+    public boolean hasEnough(CurrencyType currencyType, double amount) {
         return getCurrency(currencyType) >= amount;
     }
 
-    public Map<String, Double> getEconomyData() {
+    public Map<CurrencyType, Double> getEconomyData() {
         return new ConcurrentHashMap<>(economyData);
     }
 
-    public void setEconomyData(Map<String, Double> economyData) {
+    public void setEconomyData(Map<CurrencyType, Double> economyData) {
         this.economyData.clear();
         this.economyData.putAll(economyData);
         markEconomyDirty();

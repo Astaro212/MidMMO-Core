@@ -1,10 +1,8 @@
 package com.astaro.midmmo.server.handlers;
 
 
-import com.astaro.midmmo.common.network.C2S.StatRequestPacket;
 import com.astaro.midmmo.common.network.S2C.RaceMenuPacket;
 import com.astaro.midmmo.server.MidMMOServer;
-import com.astaro.midmmo.server.database.SQLWorker;
 import com.astaro.midmmo.server.database.enums.PlayerQueries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;

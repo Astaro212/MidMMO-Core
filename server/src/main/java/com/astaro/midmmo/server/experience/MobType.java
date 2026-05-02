@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -52,7 +52,7 @@ public enum MobType {
     public static void loadMobs(ResourceManager manager) {
         ENTITY_NAME.clear();
 
-        ResourceLocation mobLocation = ResourceLocation.fromNamespaceAndPath("midmmo", "data/mobs/mobs.json");
+        Identifier mobLocation = Identifier.fromNamespaceAndPath("midmmo", "data/mobs/mobs.json");
         try {
             // Проверяем наличие ресурса
             if (manager.getResource(mobLocation).isEmpty()) {
@@ -73,7 +73,7 @@ public enum MobType {
                         String mobType = mobObject.get("mob_type").getAsString();
                         String category = mobObject.get("category").getAsString();
                         float expGiven = mobObject.get("exp_granted").getAsFloat();
-                        ResourceLocation resourceLoc = ResourceLocation.tryParse(
+                        Identifier resourceLoc = Identifier.tryParse(
                                 mobType.contains(":") ? mobType : "minecraft:" + mobType
                         );
                         BuiltInRegistries.ENTITY_TYPE.getOptional(resourceLoc).ifPresentOrElse(

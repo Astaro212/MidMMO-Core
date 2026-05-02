@@ -4,6 +4,7 @@
 *.iml
 *.ipr
 *.iws
+*.lock
 
 # IntelliJ
 out/
@@ -101,7 +102,17 @@ $RECYCLE.BIN/
 *.lnk
 
 .gradle
+.idea
+api/gradle
+api/build
+client/gradle
+client/build
+server/gradle
+server/build
+common/gradle
+common/build
 build/
+.gradle/
 
 # Ignore Gradle GUI config
 gradle-app.setting

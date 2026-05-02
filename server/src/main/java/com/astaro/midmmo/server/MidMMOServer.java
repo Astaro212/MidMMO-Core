@@ -3,6 +3,8 @@ package com.astaro.midmmo.server;
 import com.astaro.midmmo.server.cache.PlayerDataCache;
 import com.astaro.midmmo.server.database.SQLWorker;
 import com.astaro.midmmo.server.database.sql.TableInitialize;
+import com.astaro.midmmo.server.economy.Economy;
+import com.astaro.midmmo.server.economy.EconomyManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.CreativeModeTab;

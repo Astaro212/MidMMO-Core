@@ -2,6 +2,9 @@ package com.astaro.midmmo.server.experience;
 
 
 import com.astaro.midmmo.api.interfaces.ExpAPI;
+import com.astaro.midmmo.server.MidMMOServer;
+import com.astaro.midmmo.server.cache.PlayerDataCache;
+import com.astaro.midmmo.server.player.PlayerProfile;
 
 import java.util.UUID;
 
@@ -111,14 +114,12 @@ public class PlayerExp implements ExpAPI {
 
     //Update player cache and data in DB
     private void updateCachedExp() {
-        PlayerData data = PlayerDataCache.get(uuid);
+        PlayerProfile data = MidMMOServer.playerCache.getOrRestore(uuid);
 
         if (data != null) {
-
             data.setPlayerExp(exp);
             data.setPlayerLevel(level);
-
-            PlayerDataCache.put(uuid, data);
+            MidMMOServer.playerCache.put(uuid, data);
         }
     }
 

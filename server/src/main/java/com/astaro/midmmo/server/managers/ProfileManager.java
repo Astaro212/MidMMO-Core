@@ -2,7 +2,6 @@ package com.astaro.midmmo.server.managers;
 
 import com.astaro.midmmo.common.network.S2C.RaceMenuPacket;
 import com.astaro.midmmo.server.MidMMOServer;
-import com.astaro.midmmo.server.database.SQLWorker;
 import com.astaro.midmmo.server.database.enums.PlayerQueries;
 import com.astaro.midmmo.server.player.PlayerProfile;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,6 +10,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,6 +21,7 @@ public class ProfileManager {
 
     public static void loadProfile(ServerPlayer player) {
         UUID uuid = player.getUUID();
+
         MidMMOServer.sqlWorker.queryOne(PlayerQueries.GET_FULL_PROFILE.get(), PlayerProfile.class, uuid).thenAcceptAsync(
                 opt -> opt.ifPresentOrElse(
                         record -> {
@@ -30,7 +31,13 @@ public class ProfileManager {
                         },
                         () -> {
                             player.setGameMode(GameType.SPECTATOR);
-                            PacketDistributor.sendToPlayer(player, new RaceMenuPacket(player.containerMenu.containerId, -1, -1));
+                            Map<Integer, Integer> initialStats = new HashMap<>();
+                            profiles.get(player.getUUID()).getStatsManager().getStats().forEach(
+                                    (statType, aDouble) -> {
+                                        initialStats.put(statType.getNetworkId(), aDouble.intValue());
+                                    }
+                            );
+                            PacketDistributor.sendToPlayer(player, new RaceMenuPacket(player.containerMenu.containerId, -1, -1, initialStats));
                         }
                 ));
     }

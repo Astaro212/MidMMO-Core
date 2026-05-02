@@ -1,6 +1,6 @@
 package com.astaro.midmmo.server.player;
 
-public class RPGPlayer {
+public class CreatePlayer {
 
 }
 

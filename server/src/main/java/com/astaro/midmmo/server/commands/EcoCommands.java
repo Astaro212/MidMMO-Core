@@ -1,8 +1,8 @@
 package com.astaro.midmmo.server.commands;
 
-
-import astaro.midmmo.core.economy.Economy;
-import astaro.midmmo.core.economy.EconomyManager;
+import com.astaro.midmmo.server.MidMMOServer;
+import com.astaro.midmmo.server.economy.Economy;
+import com.astaro.midmmo.server.economy.EconomyManager;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
@@ -19,7 +19,7 @@ public class EcoCommands {
                 .then(Commands.literal("balance")
                         .executes(context -> {
                             ServerPlayer player = context.getSource().getPlayerOrException();
-                            Component message = EconomyManager.getFormattedBalance(player, Economy.DOLLARS());
+                            Component message = MidMMOServer.playerCache.get(player.getUUID()).getCurrency("dollars")
                             context.getSource().sendSuccess(() -> message, false);
                             return Command.SINGLE_SUCCESS;
                         })
@@ -49,4 +49,7 @@ public class EcoCommands {
 
         );
     }
+
+    public void
+
 }

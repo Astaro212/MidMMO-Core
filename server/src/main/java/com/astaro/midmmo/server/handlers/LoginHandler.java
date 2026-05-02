@@ -1,9 +1,7 @@
 package com.astaro.midmmo.server.handlers;
 
-import com.astaro.midmmo.common.network.S2C.RaceMenuPacket;
 import com.astaro.midmmo.server.MidMMOServer;
 import com.astaro.midmmo.server.cache.PlayerDataCache;
-import com.astaro.midmmo.server.database.SQLWorker;
 import com.astaro.midmmo.server.experience.PlayerExp;
 import com.astaro.midmmo.server.managers.PlayerStatsManager;
 import com.astaro.midmmo.server.managers.ProfileManager;
@@ -11,8 +9,6 @@ import com.astaro.midmmo.server.player.PlayerProfile;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.GameType;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
